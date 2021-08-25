@@ -70,6 +70,9 @@
 #define MONSTER_FOURTH_RANK         3           
 #define MONSTER_FIFTH_RANK          4           
 
+#define JUDGETIME 1 //--->캐릭터 체력깎일때 무적인 시간 1초
+#define M_JUDGETIME 0.0005 //--->몬스터 체력깎일때 무적인 시간 1초
+
 //함수 원형 선언
 void gotoxy(int x, int y); //gotoxy 함수.
 void ljh_CharTreat(); //캐릭터처리함수.
@@ -88,6 +91,9 @@ void sh_monster_move(); //몬스터움직임처리함수.
 void sh_monster_print(); //몬스터출력함수.
 void sh_monster_create(); //몬스터생성함수.
 void sh_monster_HP(); //몬스터체력함수.
+//insert
+void sh_monster_Rhit(); //몬스터 피격 시 위치 수정함수(오).
+void sh_monster_Lhit(); //몬스터 피격 시 위치 수정함수(왼).
 
 void insuk_start(char name[3]);
 char insuk_option(void);
@@ -102,6 +108,10 @@ void hh_RightAttackJudge(int, int);
 void hh_LeftAttackJudge(int, int);
 void hh_HPdecrease(int);
 void hh_AttackDamage(int);
+
+
+
+
 
 //전역변수
 char name[3];
@@ -134,6 +144,9 @@ time_t game_play_time = 0; //게임 종료 시간을 저장함.
 int monster[11][15];
 int monster_jump_control = MONSTER_JUMP_DEGREE;
 int monster_time = 0;
+
+int a;
+long long c_runstart, m_runstart, c_runstop, m_runstop;
 
 
 /*
@@ -409,52 +422,11 @@ void insuk_help(void)
 {
     char exit;
     system("cls");
-    gotoxy(0, 0);//상 
-    for (int i = 0; i < 40; i++)
-    {
-        printf("□");
-    }
-    gotoxy(0, 24);//하
-    for (int i = 0; i < 40; i++)
-    {
-        printf("□");
-    }
-
-    for (int i = 1; i < 24; i++)//좌  
-    {
-        gotoxy(0, i);
-        printf("□");
-    }
-    for (int i = 1; i < 24; i++)//우 
-    {
-        gotoxy(78, i);
-        printf("□");
-    }
-    gotoxy(22, 4);
-    printf("#  #  ##  #   # #### ###     # ####");
-    gotoxy(22, 5);
-    printf("## # #  #  # #   ##  #  #   ## #  #");
-    gotoxy(22, 6);
-    printf("# ## #  #  # #   ##  #  #    # ####");
-    gotoxy(22, 7);
-    printf("#  #  ##    #   #### ###    ###   #");
-    gotoxy(21, 12);
     printf("점프 = 위방향키(위화살표)\n");
-    gotoxy(21, 13);
     printf("왼쪽이동 = 왼쪽방향키(왼쪽화살표)\n");
-    gotoxy(21, 14);
     printf("오른쪽이동 = 오른쪽방향키(오른쪽화살표)\n");
-    gotoxy(21, 15);
     printf("공격 = spacebar\n");
-    gotoxy(21, 16);
     printf("게임종료 = t\n");
-    gotoxy(21, 17);
-    printf("AZ구매 = j");
-    gotoxy(21, 18);
-    printf("Moderna구매 = k");
-    gotoxy(21, 19);
-    printf("Pfizer구매 = l");
-    gotoxy(21, 21);
     printf("메인메뉴로 돌아가려면 아무키나 누르세요.");
     exit = _getch();
     system("cls");
@@ -655,36 +627,6 @@ void insuk_rankload(void)
     char quit;
     system("cls");
 
-    gotoxy(0, 0);//상 
-    for (int i = 0; i < 40; i++)
-    {
-        printf("□");
-    }
-    gotoxy(0, 24);//하
-    for (int i = 0; i < 40; i++)
-    {
-        printf("□");
-    }
-
-    for (int i = 1; i < 24; i++)//좌  
-    {
-        gotoxy(0, i);
-        printf("□");
-    }
-    for (int i = 1; i < 24; i++)//우 
-    {
-        gotoxy(78, i);
-        printf("□");
-    }
-    gotoxy(22, 3);
-    printf("#  #  ##  #   # #### ###     # ####");
-    gotoxy(22, 4);
-    printf("## # #  #  # #   ##  #  #   ## #  #");
-    gotoxy(22, 5);
-    printf("# ## #  #  # #   ##  #  #    # ####");
-    gotoxy(22, 6);
-    printf("#  #  ##    #   #### ###    ###   #");
-
     char rankname[4][3];
     int rank[4], count = 0;
     FILE* fp;
@@ -693,11 +635,9 @@ void insuk_rankload(void)
     {
         count++;
     }
-    gotoxy(22, 9);
-    printf("*****************AZ****************\n");
+    printf("*********AZ**********\n");
     for (int i = 0; i < count; i++)
     {
-        gotoxy(31, i+10);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
@@ -708,11 +648,9 @@ void insuk_rankload(void)
     {
         count++;
     }
-    gotoxy(22, 13);
-    printf("***************Moderna*************\n");
+    printf("*******Moderna*******\n");
     for (int i = 0; i < count; i++)
     {
-        gotoxy(31, i + 14);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
@@ -723,16 +661,14 @@ void insuk_rankload(void)
     {
         count++;
     }
-    gotoxy(22, 17);
-    printf("****************Pfizer*************\n");
+    printf("*******Pfizer********\n");
     for (int i = 0; i < count; i++)
     {
-        gotoxy(31, i + 18);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
-    gotoxy(22, 21);
-    printf("q를 누르면 종료 화면으로 넘어갑니다.");
+
+    printf("\nq를 누르면 종료 화면으로 넘어갑니다.");
 
     while (1)
     {
@@ -1610,53 +1546,23 @@ void sh_Restart()
 */
 void sh_HP()
 {
-
-    while (HP <= 0) // 체력이 0이하일 때 
+    if (HP <= 0) // 체력이 0이하일 때 
     {
-        char option;
         system("cls");
-        gotoxy(0, 0);//상 
-        for (int i = 0; i < 40; i++)
-        {
-            printf("□");
-        }
-        gotoxy(0, 24);//하
-        for (int i = 0; i < 40; i++)
-        {
-            printf("□");
-        }
-
-        for (int i = 1; i < 24; i++)//좌  
-        {
-            gotoxy(0, i);
-            printf("□");
-        }
-        for (int i = 1; i < 24; i++)//우 
-        {
-            gotoxy(78, i);
-            printf("□");
-        }
-
-        gotoxy(22, 7);
-        printf("#  #  ##  #   # #### ###     # ####");
-        gotoxy(22, 8);
-        printf("## # #  #  # #   ##  #  #   ## #  #");
-        gotoxy(22, 9);
-        printf("# ## #  #  # #   ##  #  #    # ####");
-        gotoxy(22, 10);
-        printf("#  #  ##    #   #### ###    ###   #");
-        gotoxy(22, 15);
-        printf("당신은 코로나에 감염되었습니다...");
-        gotoxy(25, 16);
+        printf("당신은 코로나에 감염되었습니다...\n");
         printf("재도전(n) or 게임 종료(t)");
-        option = _getch();
-        if (option == 'n' || option == 'N')
+        while (1)
         {
-            sh_Restart();
-        }
-        if (option == 't' || option == 'T')
-        {
-            exit(0);
+            char option = getch();
+            if (option == 'n')
+            {
+                sh_Restart();
+                break;
+            }
+            if (option == 't')
+            {
+                exit(0);
+            }
         }
         system("cls");
 
@@ -1704,43 +1610,8 @@ void sh_Victory()
 
         //문구 출력
         system("cls");
-        gotoxy(0, 0);//상 
-        for (int i = 0; i < 40; i++)
-        {
-            printf("□");
-        }
-        gotoxy(0, 24);//하
-        for (int i = 0; i < 40; i++)
-        {
-            printf("□");
-        }
-
-        for (int i = 1; i < 24; i++)//좌  
-        {
-            gotoxy(0, i);
-            printf("□");
-        }
-        for (int i = 1; i < 24; i++)//우 
-        {
-            gotoxy(78, i);
-            printf("□");
-        }
-
-        gotoxy(22, 7);
-        printf("#  #  ##  #   # #### ###     # ####");
-        gotoxy(22, 8);
-        printf("## # #  #  # #   ##  #  #   ## #  #");
-        gotoxy(22, 9);
-        printf("# ## #  #  # #   ##  #  #    # ####");
-        gotoxy(22, 10);
-        printf("#  #  ##    #   #### ###    ###   #");
-        gotoxy(16, 13);
-        printf("당신은 성공적으로 백신의 2차 접종을 맞으셨습니다.");
-        gotoxy(16, 14);
-        printf("COVID 19으로 부터 살아남으시느라 고생하셨습니다.");
-        gotoxy(24, 15);
-        printf("마음 놓고 일상생활을 즐기세요!");
-        gotoxy(21, 17);
+        printf("당신은 성공적으로 백신의 2차 접종을 맞으셨습니다.\n");
+        printf("COVID 19으로 부터 살아남으시느라 고생하셨습니다. 마음 놓고 일상생활을 즐기세요!\n\n\n");
         printf("아무 키나 누르면 게임이 종료됩니다.");
 
         key = getch();
@@ -1754,7 +1625,7 @@ void sh_Victory()
 * 받는 값
 * 리턴 값
 */
-void sh_monster()//insert
+void sh_monster()
 {
     game_play_time = time(NULL);
     sh_monster_change(); //랭크에 따라 체력, 공격력, 돈 변화.
@@ -1831,7 +1702,7 @@ void sh_monster_print()
 * 받는 값 : X
 * 리턴 값 : X
 */
-void sh_monster_move()
+void sh_monster_move() //insert
 {
     if (game_play_time - game_start_time == 0)
     {
@@ -1918,7 +1789,7 @@ void sh_monster_move()
 
             if (monster_jump_control == MONSTER_JUMP_DEGREE) // 점프 주기 조절
             {
-                if (monster[3][i] != (RIGHT_BOUND - 3)) // 오른쪽 벽에 막히지 않을 경우
+                if (monster[3][i] != (RIGHT_BOUND - 2)) // 오른쪽 벽에 막히지 않을 경우
                 {
                     monster[3][i] += JUMP_GRAVITY;//오른쪽
                 }
@@ -1979,6 +1850,22 @@ void sh_monster_change()
     //1분마다 몬스터의 랭크 변화.
     if (game_play_time - game_start_time == 60)
     {
+        gotoxy(3, 2);
+        printf("바이러스에게 알파 변이가 발생하였습니다!");
+        gotoxy(3, 3);
+        printf("강해진 바이러스에 대비하세요!");
+        gotoxy(3, 4);
+        printf("q를 눌려 게임으로 돌아가세요.");
+        while (1)
+        {
+            char trash_l = getch();
+            if (trash_l == 'q')
+            {
+                system("cls");
+                break;
+
+            }
+        }
         for (int i = 0; i < 15; i++)
         {
             monster[8][i] = MONSTER_SECOND_RANK;
@@ -1987,6 +1874,21 @@ void sh_monster_change()
     }
     if (game_play_time - game_start_time == 120)
     {
+        gotoxy(3, 2);
+        printf("바이러스에게 베타 변이가 발생하였습니다! 강해진 바이러스에 대비하세요!");
+        gotoxy(3, 3);
+        printf("강해진 바이러스에 대비하세요!");
+        gotoxy(3, 4);
+        printf("q를 눌려 게임으로 돌아가세요.");
+        while (1)
+        {
+            char trash_l = getch();
+            if (trash_l == 'q')
+            {
+                system("cls");
+                break;
+            }
+        }
         for (int i = 0; i < 15; i++)
         {
             monster[8][i] = MONSTER_THIRD_RANK;
@@ -1995,6 +1897,21 @@ void sh_monster_change()
     }
     if (game_play_time - game_start_time == 180)
     {
+        gotoxy(3, 2);
+        printf("바이러스에게 감마 변이가 발생하였습니다! 강해진 바이러스에 대비하세요!");
+        gotoxy(3, 3);
+        printf("강해진 바이러스에 대비하세요!");
+        gotoxy(3, 4);
+        printf("q를 눌려 게임으로 돌아가세요.");
+        while (1)
+        {
+            char trash_l = getch();
+            if (trash_l == 'q')
+            {
+                system("cls");
+                break;
+            }
+        }
         for (int i = 0; i < 15; i++)
         {
             monster[8][i] = MONSTER_FOURTH_RANK;
@@ -2003,6 +1920,21 @@ void sh_monster_change()
     }
     if (game_play_time - game_start_time == 240)
     {
+        gotoxy(3, 2);
+        printf("바이러스에게 델타 변이가 발생하였습니다! 강해진 바이러스에 대비하세요!");
+        gotoxy(3, 3);
+        printf("강해진 바이러스에 대비하세요!");
+        gotoxy(3, 4);
+        printf("q를 눌려 게임으로 돌아가세요.");
+        while (1)
+        {
+            char trash_l = getch();
+            if (trash_l == 'q')
+            {
+                system("cls");
+                break;
+            }
+        }
         for (int i = 0; i < 15; i++)
         {
             monster[8][i] = MONSTER_FIFTH_RANK;
@@ -2045,7 +1977,7 @@ void sh_monster_change()
 * 리턴 값 : X
 */
 
-void sh_monster_create() //insert
+void sh_monster_create()
 {
     int j, k = 0; //for문을 위한 지역변수 설정
     for (k = 0; k < 10; k++)
@@ -2085,7 +2017,7 @@ void sh_monster_create() //insert
                 {
                     monster[5][j] = MONSTER_FIFTH_HP;
                 }
-
+                
 
             }
             monster[3][0] = MONSTER_FIRST_X_POSITION;
@@ -2259,7 +2191,7 @@ void sh_monster_create() //insert
 * 리턴 값 : X
 */
 
-void sh_monster_HP() //insert
+void sh_monster_HP()
 {
     int k = 0;
     for (int i = 0; i < 15; i++)
@@ -2283,6 +2215,74 @@ void sh_monster_HP() //insert
     }
 }
 
+/*
+* 이름 : sh_monster_Rhit()
+* 기능 :
+* 받는 값 : 
+* 리턴 값 : 
+*/
+void sh_monster_Rhit()
+{
+    if ( monster[3][a] + 2 == RIGHT_BOUND) //벽 끝에 닿을 때.
+    {
+       
+    }
+    else if ( monster[3][a] + 3 == RIGHT_BOUND)//벽에서 한 칸 떨어져 있을 때.
+    {
+        gotoxy(monster[3][a], monster[4][a]);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 1);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 2);
+        printf("   ");
+        monster[3][a] = monster[3][a] + 1;
+    }
+    else//벽에서 두 칸 이상 떨어져 있을 때.
+    {
+        gotoxy(monster[3][a], monster[4][a]);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 1);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 2);
+        printf("   ");
+        monster[3][a] = monster[3][a] + 2;
+    }
+    
+}
+
+/*
+* 이름 : 
+* 기능 :
+* 받는 값 :
+* 리턴 값 :
+*/
+void sh_monster_Lhit()
+{
+    if (monster[3][a] == LEFT_BOUND) // 벽 끝에 있을 때.
+    {
+        
+    }
+    else if (monster[3][a] - 1 == LEFT_BOUND) //벽에서 한 칸 떨어져 있을 때.
+    {
+        gotoxy(monster[3][a], monster[4][a]);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 1);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 2);
+        printf("   ");
+        monster[3][a] = monster[3][a] - 1;
+    }
+    else//벽에서 두 칸 이상 떨어져 있을 때.
+    {
+        gotoxy(monster[3][a], monster[4][a]);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 1);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 2);
+        printf("   ");
+        monster[3][a] = monster[3][a] - 2;
+    }
+}
 
 /*
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2306,11 +2306,7 @@ void gotoxy(int x, int y)
 
 //////////////김환희////////////////////
 
-int a;
 
-long long c_runstart, m_runstart, c_runstop, m_runstop;
-#define JUDGETIME 1 //--->캐릭터 체력깎일때 무적인 시간 1초
-#define M_JUDGETIME 0.0005 //--->몬스터 체력깎일때 무적인 시간 1초
 
 /*
 * 이름: hh_DamageJudge
@@ -2356,7 +2352,9 @@ void hh_RightAttackJudge(int MX, int MY)
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
                     {
+                        sh_monster_Rhit();
                         hh_AttackDamage(a);
+                        
                     }
                 }
                 break;
@@ -2365,6 +2363,7 @@ void hh_RightAttackJudge(int MX, int MY)
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
                     {
+                        sh_monster_Rhit();
                         hh_AttackDamage(a);
                     }
                 }
@@ -2374,6 +2373,7 @@ void hh_RightAttackJudge(int MX, int MY)
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
                     {
+                        sh_monster_Rhit();
                         hh_AttackDamage(a);
                     }
                 }
@@ -2383,6 +2383,7 @@ void hh_RightAttackJudge(int MX, int MY)
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
                     {
+                        sh_monster_Rhit();
                         hh_AttackDamage(a);
                     }
                 }
@@ -2411,6 +2412,7 @@ void hh_LeftAttackJudge(int MX, int MY)
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
                     {
+                        sh_monster_Lhit();
                         hh_AttackDamage(a);
                     }
                 }
@@ -2420,6 +2422,7 @@ void hh_LeftAttackJudge(int MX, int MY)
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
                     {
+                        sh_monster_Lhit();
                         hh_AttackDamage(a);
                     }
                 }
@@ -2429,6 +2432,7 @@ void hh_LeftAttackJudge(int MX, int MY)
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
                     {
+                        sh_monster_Lhit();
                         hh_AttackDamage(a);
                     }
                 }
@@ -2438,6 +2442,7 @@ void hh_LeftAttackJudge(int MX, int MY)
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
                     {
+                        sh_monster_Lhit();
                         hh_AttackDamage(a);
                     }
                 }
