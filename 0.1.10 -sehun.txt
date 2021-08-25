@@ -1,0 +1,2774 @@
+#pragma warning(disable : 4996)
+
+#include<stdio.h>
+#include<windows.h>
+#include<stdlib.h>
+#include<conio.h>
+#include<time.h>
+#include<io.h>
+
+
+//매크로
+#define LEFT_BOUND                  2           //왼쪽 맵 경계값. 이 위치까지 이동 가능.
+#define RIGHT_BOUND                 77          //오른쪽 맵 경계값. 이 위치까지 이동 가능.
+#define UP_BOUND                    3           //위쪽 맵 경계값. 이 위치까지 이동 가능.
+#define DOWN_BOUND                  23          //아래쪽 맵 경계값. 이 위치까지 이동 가능.
+
+#define MOVE_DEGREE                 2           //루프 몇 번마다 좌우 좌표를 수정할 지에 대한 값. 이 값이 커질수록 좌우 이동 속력이 느려짐.
+
+#define JUMP_BOUND                  10          //점프 최대 높이 값.
+#define JUMP_GRAVITY                1           //점프 시 적용될 중력 계수.
+#define JUMP_DEGREE                 1           //점프 시 루프 몇 번마다 상하 좌표를 수정할 지에 대한 값. 이 값이 커질수록 점프 속력이 느려짐.
+
+#define ATTACK_CONDITION_TIME       6           //공격 키 입력 시 공격 상태 유지 시간(초)
+#define ATTACK_COOLTIME             2           //공격 쿨타임 시간. 초단위.
+
+#define WEAPON_PRICE_1A             50          // 무기 1차 가격
+#define WEAPON_PRICE_1M             70
+#define WEAPON_PRICE_1P             100
+
+#define WEAPON_PRICE_2A             150         //무기 2차 가격
+#define WEAPON_PRICE_2M             210
+#define WEAPON_PRICE_2P             300
+
+#define ATTACK_N_DAMAGE             1           //기본 공격력
+#define ATTACK_A_DAMAGE             2           //A 공격력
+#define ATTACK_M_DAMAGE             3           //M 공격력
+#define ATTACK_P_DAMAGE             6           //P 공격력
+
+#define MONSTER_JUMP_BOUND          10          //점프 최대 높이 값.
+#define MONSTER_JUMP_GRAVITY        1           //점프 시 적용될 중력 계수.
+#define MONSTER_JUMP_DELAY          4           //몬스터 점프 딜레이
+#define MONSTER_JUMP_DEGREE         7           //몬스터 점프 속도(특정 숫자일 때 제대로 작동되지 않음. 1번째 몬스터만 움직이는 버그)
+
+#define MONSTER_GEN_DELAY           6           //몬스터 젠 딜레이
+
+#define MONSTER_FIRST_X_POSITION    10          //몬스터 1번 X 위치
+#define MONSTER_SECOND_X_POSITION   40          //몬스터 2번 X 위치
+#define MONSTER_THIRD_X_POSITION    70          //몬스터 3번 X 위치
+
+#define MONSTER_Y_POSITION          10          //몬스터 Y 위치
+
+#define MONSTER_FIRST_HP            3           //몬스터 1단계 체력
+#define MONSTER_SECOND_HP           6           //몬스터 2단계 체력
+#define MONSTER_THIRD_HP            12           //몬스터 3단계 체력
+#define MONSTER_FOURTH_HP           12          //몬스터 4단계 체력
+#define MONSTER_FIFTH_HP            18          //몬스터 5단계 체력
+
+#define MONSTER_FIRST_MONEY         3           //몬스터 1단계 돈
+#define MONSTER_SECOND_MONEY        5           //몬스터 2단계 돈
+#define MONSTER_THIRD_MONEY         8           //몬스터 3단계 돈
+#define MONSTER_FOURTH_MONEY        10           //몬스터 4단계 돈
+#define MONSTER_FIFTH_MONEY         15           //몬스터 5단계 돈
+
+#define MONSTER_FIRST_DAMAGE        9           //몬스터 1단계 대미지
+#define MONSTER_SECOND_DAMAGE       10          //몬스터 2단계 대미지
+#define MONSTER_THIRD_DAMAGE        13          //몬스터 3단계 대미지
+#define MONSTER_FOURTH_DAMAGE       15          //몬스터 4단계 대미지
+#define MONSTER_FIFTH_DAMAGE        20          //몬스터 5단계 대미지
+
+#define MONSTER_FIRST_RANK          0           //몬스터 변이 단계
+#define MONSTER_SECOND_RANK         1           
+#define MONSTER_THIRD_RANK          2           
+#define MONSTER_FOURTH_RANK         3           
+#define MONSTER_FIFTH_RANK          4           
+
+#define JUDGETIME                   1           //--->캐릭터 체력깎일때 무적인 시간 1초
+#define M_JUDGETIME                 0.0005      //--->몬스터 체력깎일때 무적인 시간 1초
+
+
+//함수 원형 선언
+void gotoxy(int x, int y); //gotoxy 함수.
+void ljh_CharTreat(); //캐릭터처리함수.
+void ljh_GameProcess(void); //게임진행함수.
+void ljh_game_reset(void); //게임 리셋 함수.
+void ljh_cursor(void);
+
+void hh_consolebar(); //게임화면출력함수.
+
+void sh_HP(); //HP상태에 따라 HP리젠 및 게임 패배를 관리하는 함수.
+void sh_Victory(); //게임성공함수.
+void sh_Restart(); //게임실패함수.
+void sh_monster(); //몬스터처리함수.
+void sh_monster_change(); //몬스터변화함수.
+void sh_monster_move(); //몬스터움직임처리함수.
+void sh_monster_print(); //몬스터출력함수.
+void sh_monster_create(); //몬스터생성함수.
+void sh_monster_HP(); //몬스터체력함수.
+
+void sh_monster_Rhit(); //몬스터 피격 시 위치 수정함수(오).
+void sh_monster_Lhit(); //몬스터 피격 시 위치 수정함수(왼).
+
+void insuk_start(char name[3]);
+char insuk_option(void);
+void insuk_help(void);
+void insuk_startoption(void);
+void insuk_saverank(void);
+void insuk_rankload(void);
+
+void hh_run(void);
+void hh_DamageJudge(int, int);
+void hh_RightAttackJudge(int, int);
+void hh_LeftAttackJudge(int, int);
+void hh_HPdecrease(int);
+void hh_AttackDamage(int);
+
+
+//전역변수
+char name[3];
+
+int score; //랭크 반영 시 사용함.
+
+int move_control_right = MOVE_DEGREE; //캐릭터의 왼쪽 움직임 시 루프 몇 바퀴마다 좌표를 수정할 지에 대한 정보를 저장함.
+int move_control_left = MOVE_DEGREE; //캐릭터의 오른쪽 움직임 시 루프 몇 바퀴마다 좌표를 수정할 지에 대한 정보를 저장함.
+
+int jump; //점프 상태 관련 전역변수. 점프 중이면 1, 점프 중이 아니면 0을 저장함.
+int jump_across; //점프 시 최대 높이까지 도달했는지를 저장함. 점프하지 않았거나 최대 높이 이전이면 0을, 최대 높이 이후이면 0보다 큰 수를 저장함.
+int jump_control = JUMP_DEGREE; //캐릭터의 점프 키 입력 시 루프 몇 바퀴마다 상하 좌표를 수정할 지에 대한 정보를 저장함.
+
+int char_side; //캐릭터의 현재 이동 방향을 저장함. 오른쪽을 향하고 있으면 0을, 왼쪽을 향하고 있으면 1을 저장함. 
+
+int HP = 100; //체력
+int HP_condition = 0;//체력 리젠 상태(0일경우 리젠x, 1일경우 리젠o
+time_t HP_start, HP_end = 0; //체력 관련 시간 초기화
+int money = 0; //소유한 돈, 처음엔 0원
+int weapon_damage = ATTACK_N_DAMAGE;//무기의 공격력(기본, A, M, P를 순서대로 1,2,3,4로 설정)
+int weapon_kind; //무기의 종류(기본, A, M, P를 순서대로 0,1,2,3으로 구분)
+int weapon_rank = 0; //무기의 업그레이드 단계(기본, 1단계, 2단계를 순서대로 0,1,2로 구분)
+
+int x = 5; //캐릭터 좌표를 저장할 전역변수.
+int y = DOWN_BOUND - 2;
+
+int attack_condition; //현재 공격 상태를 저장할 전역변수. 공격 상태가 0이면 공격 관련 조건문들 처리하지 않고, 공격 상태가 1이면 현재 무기 상태에 맞춰서 무기 출력.
+
+long long space_start_time; //공격 키를 입력한 순간을 저장할 전역변수.
+long long space_cooltime_start_time; //공격 상태 종료 시점. 초단위.
+long long space_cooltime_last_time; //공격 상태 종료 이후 시점. 초단위.
+int space_cooltime = 0; //쿨타임 상태인지를 저장함. 0이면 쿨타임 중이 아닌 것, 1이면 쿨타임 중인 것.
+
+time_t game_start_time; //게임 시작 시간을 저장함.
+time_t game_play_time = 0; //게임 종료 시간을 저장함.
+
+int monster[11][15];
+int monster_jump_control = MONSTER_JUMP_DEGREE;
+int monster_time = 0;
+
+int a;
+long long c_runstart, m_runstart, c_runstop, m_runstop;
+
+
+/*
+* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
+//main 함수
+
+
+/*
+* 이름: main 함수.
+* 기능: main 함수.
+* 받는값: X
+* 리턴값: X
+*/
+int main(void)
+{
+    //테스트를 위한 임시 값. (tmp)
+    money = 1000;
+    HP = 80;
+
+    //시작옵션함수.
+    insuk_startoption();
+
+    //게임진행함수.
+    ljh_GameProcess();
+
+    return 0;
+}
+
+
+/*
+* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
+//시작옵션함수.
+
+
+/*
+* 이름 : 시작옵션함수
+* 기능 : 시작 옵션 관련 처리.
+* 입력값 : X
+* 이름 : 시작옵션함수
+* 기능 : 시작 옵션 관련 처리.
+* 입력값 : X
+* 출력값 : X
+*/
+void insuk_startoption(void)
+{
+    if (_access("ranking0.txt", 0) == (-1))
+    {
+        FILE* fp_tmp;
+        fp_tmp = fopen("ranking0.txt", "w");
+        fclose(fp_tmp);
+    }
+    if (_access("ranking1.txt", 0) == (-1))
+    {
+        FILE* fp_tmp;
+        fp_tmp = fopen("ranking1.txt", "w");
+        fclose(fp_tmp);
+    }
+    if (_access("ranking2.txt", 0) == (-1))
+    {
+        FILE* fp_tmp;
+        fp_tmp = fopen("ranking2.txt", "w");
+        fclose(fp_tmp);
+    }
+    char op;
+    insuk_start(name);
+    do
+    {
+        op = insuk_option();
+        if (op == 'n')
+        {
+            break;
+        }
+        if (op == 'h')
+        {
+            insuk_help();
+        }
+        if (op == 'r')
+        {
+            insuk_rankload();
+        }
+    } while (op == 'h' || op == 'r');
+
+    system("cls");
+}
+
+
+/*
+* 이름 : insuk_start함수
+* 기능 : 게임시작 -> 이름 받기 -> system("cls")
+* 입력값 : 이름
+* 출력값 : x
+*/
+void insuk_start(char name[3])
+{
+    int nm = 0;
+    char back;
+    do
+    {
+        nm = 0;
+
+        gotoxy(0, 0);//상 
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+        gotoxy(0, 24);//하
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+
+        for (int i = 1; i < 24; i++)//좌  
+        {
+            gotoxy(0, i);
+            printf("□");
+        }
+        for (int i = 1; i < 24; i++)//우 
+        {
+            gotoxy(78, i);
+            printf("□");
+        }
+
+        gotoxy(22, 7);
+        printf("#  #  ##  #   # #### ###     # ####");
+        gotoxy(22, 8);
+        printf("## # #  #  # #   ##  #  #   ## #  #");
+        gotoxy(22, 9);
+        printf("# ## #  #  # #   ##  #  #    # ####");
+        gotoxy(22, 10);
+        printf("#  #  ##    #   #### ###    ###   #");
+
+        gotoxy(14, 20);
+        printf(" o ");
+        gotoxy(14, 21);
+        printf("(|)=-|M---");
+        gotoxy(14, 22);
+        printf("- -");
+
+        gotoxy(35, 19);
+        printf(" W   !!");
+        gotoxy(35, 20);
+        printf(">A<");
+        gotoxy(35, 21);
+        printf(" M ");
+
+        gotoxy(48, 20);
+        printf("oWo  !!");
+        gotoxy(48, 21);
+        printf(">G<");
+        gotoxy(48, 22);
+        printf("oMo");
+
+        gotoxy(60, 19);
+        printf("!!");
+        gotoxy(63, 19);
+        printf(" W ");
+        gotoxy(63, 20);
+        printf(">.<");
+        gotoxy(63, 21);
+        printf(" M ");
+
+        gotoxy(25, 14);
+        printf("Enter your initial(3) : ");
+
+        for (int i = 0; i < 3; i++)
+        {
+            name[i] = _getch();
+            printf("%c", name[i]);
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            if (name[i] > 64 && name[i] < 91)
+            {
+                name[i] = name[i] + 32;
+            }
+            else if (name[i] < 97 || name[i]>122)
+            {
+                nm++;
+            }
+        }
+        if (nm != 0)
+        {
+            gotoxy(25, 16);
+            printf("잘못된 입력입니다. 다시 입력하세요.");
+            back = _getch();
+        }
+        system("cls");
+    } while (nm != 0);
+    return;
+}
+
+
+/*
+* 이름 : insuk_option
+* 기능 : 옵션 입력 받기
+* 입력값 : x
+* 출력값 : op(입력받은 옵션)
+*/
+char insuk_option(void)
+{
+    int count = 0;
+    char op, back;
+    do
+    {
+        gotoxy(22, 7);
+        printf("#  #  ##  #   # #### ###     # ####");
+        gotoxy(22, 8);
+        printf("## # #  #  # #   ##  #  #   ## #  #");
+        gotoxy(22, 9);
+        printf("# ## #  #  # #   ##  #  #    # ####");
+        gotoxy(22, 10);
+        printf("#  #  ##    #   #### ###    ###   #");
+
+        gotoxy(0, 0);//상 
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+        gotoxy(0, 24);//하
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+
+        for (int i = 1; i < 24; i++)//좌  
+        {
+            gotoxy(0, i);
+            printf("□");
+        }
+        for (int i = 1; i < 24; i++)//우 
+        {
+            gotoxy(78, i);
+            printf("□");
+        }
+
+        gotoxy(25, 15);
+        printf("New Game : n");
+        gotoxy(25, 16);
+        printf("Help : h");
+        gotoxy(25, 17);
+        printf("Ranking : r");
+        gotoxy(25, 19);
+        printf("Press option : ");
+        op = _getch();
+        printf("%c\n", op);
+        if (op == 'n' || op == 'h' || op == 'r')
+        {
+            count++;
+        }
+        if (count == 0)
+        {
+            gotoxy(25, 21);
+            printf("잘못된 입력입니다. 다시 입력하세요.");
+            back = _getch();
+        }
+        system("cls");
+    } while (count == 0);
+    return op;
+}
+
+
+/*
+* 이름 : insuk_help
+* 기능 : system("cls") -> 도움말 출력 -> system("cls")
+* 입력값 : x
+* 출력값 : x
+*/
+void insuk_help(void)
+{
+    system("cls");
+
+    gotoxy(0, 0);//상 
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+    gotoxy(0, 24);//하
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+
+    for (int i = 1; i < 24; i++)//좌  
+    {
+        gotoxy(0, i);
+        printf("□");
+    }
+    for (int i = 1; i < 24; i++)//우 
+    {
+        gotoxy(78, i);
+        printf("□");
+    }
+    gotoxy(22, 4);
+    printf("#  #  ##  #   # #### ###     # ####");
+    gotoxy(22, 5);
+    printf("## # #  #  # #   ##  #  #   ## #  #");
+    gotoxy(22, 6);
+    printf("# ## #  #  # #   ##  #  #    # ####");
+    gotoxy(22, 7);
+    printf("#  #  ##    #   #### ###    ###   #");
+    gotoxy(21, 12);
+    printf("점프 = 위방향키(위화살표)\n");
+    gotoxy(21, 13);
+    printf("왼쪽이동 = 왼쪽방향키(왼쪽화살표)\n");
+    gotoxy(21, 14);
+    printf("오른쪽이동 = 오른쪽방향키(오른쪽화살표)\n");
+    gotoxy(21, 15);
+    printf("공격 = spacebar\n");
+    gotoxy(21, 16);
+    printf("게임종료 = t\n");
+    gotoxy(21, 17);
+    printf("AZ구매 = j");
+    gotoxy(21, 18);
+    printf("Moderna구매 = k");
+    gotoxy(21, 19);
+    printf("Pfizer구매 = l");
+    gotoxy(21, 21);
+
+    printf("이전으로 돌아가려면 q를 누르세요.");
+
+    char trash = 0;
+    while (1)
+    {
+        trash = getch();
+        if (trash == 'q')
+        {
+            break;
+        }
+    }
+    system("cls");
+    return;
+}
+
+
+/*
+* 이름 : insuk_saverank
+* 기능 : 게임 완료 후 랭킹을 반영함.
+* 입력값 : x
+* 출력값 : x
+*/
+void insuk_saverank(void)
+{
+    long long rank[4];
+    int temp = 4, count = 0;
+    char rankname[4][3];
+    FILE* fp;
+    if (weapon_kind == 1)
+    {
+        fp = fopen("ranking0.txt", "r");
+        while (fscanf(fp, "%s %lld", rankname[count], &rank[count]) != EOF)
+        {
+            count++;
+        }
+        rank[count] = game_play_time - game_start_time;
+        for (int i = 0; i < 3; i++)
+        {
+            rankname[count][i] = name[i];
+        }
+        for (int i = 0; i < count; i++)
+        {
+            if (rank[count] < rank[i])
+            {
+                temp = i;
+                break;
+            }
+        }
+
+        if (temp != 4)
+        {
+            for (int i = count; i > temp; i--)
+            {
+                score = rank[i - 1];
+                rank[i - 1] = rank[i];
+                rank[i] = score;
+                for (int j = 0; j < 3; j++)
+                {
+                    name[j] = rankname[i - 1][j];
+                    rankname[i - 1][j] = rankname[i][j];
+                    rankname[i][j] = name[j];
+                }
+            }
+        }
+
+        fclose(fp);
+
+        fp = fopen("ranking0.txt", "w");
+        if (count == 3)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                fprintf(fp, "%c%c%c %lld ", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < count + 1; i++)
+            {
+                fprintf(fp, "%c%c%c %lld ", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+            }
+        }
+        fclose(fp);
+    }
+
+    if (weapon_kind == 2)
+    {
+        fp = fopen("ranking1.txt", "r");
+        while (fscanf(fp, "%s %lld", rankname[count], &rank[count]) != EOF)
+        {
+            count++;
+        }
+        rank[count] = game_play_time - game_start_time;
+        for (int i = 0; i < 3; i++)
+        {
+            rankname[count][i] = name[i];
+        }
+        for (int i = 0; i < count; i++)
+        {
+            if (rank[count] < rank[i])
+            {
+                temp = i;
+                break;
+            }
+        }
+        if (temp != 4)
+        {
+            for (int i = count; i > temp; i--)
+            {
+                score = rank[i - 1];
+                rank[i - 1] = rank[i];
+                rank[i] = score;
+                for (int j = 0; j < 3; j++)
+                {
+                    name[j] = rankname[i - 1][j];
+                    rankname[i - 1][j] = rankname[i][j];
+                    rankname[i][j] = name[j];
+                }
+            }
+        }
+        fclose(fp);
+
+        fp = fopen("ranking1.txt", "w");
+        if (count == 3)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                fprintf(fp, "%c%c%c %lld ", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < count + 1; i++)
+            {
+                fprintf(fp, "%c%c%c %lld ", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+            }
+        }
+        fclose(fp);
+    }
+
+    if (weapon_kind == 3)
+    {
+        fp = fopen("ranking2.txt", "r");
+        while (fscanf(fp, "%s %lld", rankname[count], &rank[count]) != EOF)
+        {
+            count++;
+        }
+        rank[count] = game_play_time - game_start_time;
+        for (int i = 0; i < 3; i++)
+        {
+            rankname[count][i] = name[i];
+        }
+        for (int i = 0; i < count; i++)
+        {
+            if (rank[count] < rank[i])
+            {
+                temp = i;
+                break;
+            }
+        }
+        if (temp != 4)
+        {
+            for (int i = count; i > temp; i--)
+            {
+                score = rank[i - 1];
+                rank[i - 1] = rank[i];
+                rank[i] = score;
+                for (int j = 0; j < 3; j++)
+                {
+                    name[j] = rankname[i - 1][j];
+                    rankname[i - 1][j] = rankname[i][j];
+                    rankname[i][j] = name[j];
+                }
+            }
+        }
+        fclose(fp);
+
+        fp = fopen("ranking2.txt", "w");
+        if (count == 3)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                fprintf(fp, "%c%c%c %lld ", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < count + 1; i++)
+            {
+                fprintf(fp, "%c%c%c %lld ", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+            }
+        }
+        fclose(fp);
+    }
+    return;
+}
+
+
+/*
+* 이름 : insuk_rankload
+* 기능 : 랭크 파일을 읽어서 출력함.
+* 입력값 : x
+* 출력값 : x
+*/
+void insuk_rankload(void)
+{
+    char quit;
+    system("cls");
+
+    gotoxy(0, 0);//상 
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+    gotoxy(0, 24);//하
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+
+    for (int i = 1; i < 24; i++)//좌  
+    {
+        gotoxy(0, i);
+        printf("□");
+    }
+    for (int i = 1; i < 24; i++)//우 
+    {
+        gotoxy(78, i);
+        printf("□");
+    }
+    gotoxy(22, 3);
+    printf("#  #  ##  #   # #### ###     # ####");
+    gotoxy(22, 4);
+    printf("## # #  #  # #   ##  #  #   ## #  #");
+    gotoxy(22, 5);
+    printf("# ## #  #  # #   ##  #  #    # ####");
+    gotoxy(22, 6);
+    printf("#  #  ##    #   #### ###    ###   #");
+
+    char rankname[4][3];
+    int rank[4], count = 0;
+    FILE* fp;
+    fp = fopen("ranking0.txt", "r");
+    while (fscanf(fp, "%s %d", rankname[count], &rank[count]) != EOF)
+    {
+        count++;
+    }
+
+    gotoxy(22, 9);
+    printf("*****************AZ****************\n");
+    for (int i = 0; i < count; i++)
+    {
+        gotoxy(31, i + 10);
+        printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+    }
+    fclose(fp);
+
+    count = 0;
+    fp = fopen("ranking1.txt", "r");
+    while (fscanf(fp, "%s %d", rankname[count], &rank[count]) != EOF)
+    {
+        count++;
+    }
+
+    gotoxy(22, 13);
+    printf("***************Moderna*************\n");
+    for (int i = 0; i < count; i++)
+    {
+        gotoxy(31, i + 14);
+        printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+    }
+    fclose(fp);
+
+    count = 0;
+    fp = fopen("ranking2.txt", "r");
+    while (fscanf(fp, "%s %d", rankname[count], &rank[count]) != EOF)
+    {
+        count++;
+    }
+
+    gotoxy(22, 17);
+    printf("****************Pfizer*************\n");
+    for (int i = 0; i < count; i++)
+    {
+        gotoxy(31, i + 18);
+        printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
+    }
+    fclose(fp);
+    gotoxy(22, 21);
+    printf("q를 누르면 종료 화면으로 넘어갑니다.");
+
+    while (1)
+    {
+        quit = _getch();
+        if (quit == 'q')
+        {
+            system("cls");
+            break;
+        }
+    }
+
+    return;
+}
+
+
+/*
+* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
+//게임진행함수 관련
+
+
+/*
+* 이름: 게임진행함수.
+* 기능: 게임을 진행한다.
+* 받는값: X
+* 리턴값: X
+*/
+void ljh_GameProcess(void)
+{
+    ljh_cursor();//커서 제거
+
+    game_start_time = time(NULL); //게임 시작시간 저장
+
+    ljh_game_reset();//초기화 함수.
+
+    while (1)
+    {
+        hh_consolebar(); //게임화면출력함수.
+
+        ljh_CharTreat(); //캐릭터처리함수.
+        sh_monster();
+
+        hh_run();////////////////////////////////////////////////////->>0824 21시에 김환희가 테스트를 위해 넣어봄
+
+        Sleep((DWORD)0.6); //게임 속도 조절을 위한 Sleep() 함수.
+    }
+
+    return;
+}
+
+
+/*
+* 이름: 커서제거함수.
+* 기능: 콘솔에서 커서가 출력되지 않게 한다.
+* 받는값: X
+* 리턴값: X
+*/
+void ljh_cursor(void)
+{
+    CONSOLE_CURSOR_INFO cursorInfo = { 0, };
+    cursorInfo.dwSize = 1;
+    cursorInfo.bVisible = 0;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+
+    return;
+}
+
+
+/*
+* 이름: 초기화함수.
+* 기능: 게임 시작 전 초기화를 진행한다.
+* 받는값: X
+* 리턴값: X
+*/
+void ljh_game_reset(void)
+{
+    //캐릭터 관련 임시 초기화.
+    gotoxy(x, y); //초기 캐릭터 출력.
+    printf(" o ");
+    gotoxy(x, y + 1);
+    printf("(|)=");
+    gotoxy(x, y + 2);
+    printf("- -");
+
+
+    //몬스터 관련 초기화.
+    //몬스터 초기 X좌표 지정.[3]
+    for (int i = 0; i < 15; i = i + 3)
+    {
+        monster[3][i] = MONSTER_FIRST_X_POSITION;
+    }
+    for (int i = 1; i < 15; i = i + 3)
+    {
+        monster[3][i] = MONSTER_SECOND_X_POSITION;
+    }
+    for (int i = 2; i < 15; i = i + 3)
+    {
+        monster[3][i] = MONSTER_THIRD_X_POSITION;
+    }
+
+    for (int i = 0; i < 15; i++)
+    {
+        monster[0][i] = 1;//몬스터 점프 상태 지정.[0]
+        monster[1][i] = 1;//몬스터 점프 최대높이 도달 지정.[1]
+        monster[2][i] = 0;//몬스터 점프 방향 지정.[2]
+        monster[4][i] = MONSTER_Y_POSITION; //몬스터 초기 Y좌표 지정.[4]
+        monster[5][i] = MONSTER_FIRST_HP; //몬스터 1단계 체력 지정.[5]
+        monster[6][i] = MONSTER_FIRST_MONEY;//몬스터 1단계 골드 지정.[6]
+        monster[7][i] = MONSTER_FIRST_DAMAGE;//몬스터 1단계 공격력 지정.[7]
+        monster[8][i] = MONSTER_FIRST_RANK;//몬스터 1단계 변이 단계 지정.[8]
+    }
+}
+
+
+/*
+* 이름: 게임화면출력함수.
+* 기능: 체력,공격력,돈,무기 표시하는 함수
+* 받는값: 체력, 공격력, 돈 변수.
+* 리턴값: X
+*/
+void hh_consolebar(void)
+{
+    gotoxy(0, 0);//상 
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+    gotoxy(0, 24);//하
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+
+    for (int i = 1; i < 24; i++)//좌  
+    {
+        gotoxy(0, i);
+        printf("□");
+    }
+    for (int i = 1; i < 24; i++)//우 
+    {
+        gotoxy(78, i);
+        printf("□");
+    }
+    printf("\n");
+
+    gotoxy(54, 1);
+    printf("□ 체력: %3d / 100   \n", HP);
+    gotoxy(54, 2);
+    printf("□ 공격력: %3d       \n", weapon_damage);
+    gotoxy(54, 3);
+    printf("□ 돈: %5d         \n", money);
+    gotoxy(54, 4);
+
+    switch (weapon_kind)
+    {
+    case 0:
+        printf("□ 무기: 기본주사기  \n");
+        break;
+    case 1:
+        printf("□ 무기: AZ주사기  \n");
+        break;
+    case 2:
+        printf("□ 무기: 모더나주사기  \n");
+        break;
+    case 3:
+        printf("□ 무기: 화이자주사기  \n");
+        break;
+    }
+
+    gotoxy(54, 5);
+    printf("□□□□□□□□□□□□\n");
+}
+
+
+/*
+* 이름:캐릭터처리함수.
+* 기능: 게임 중 입력하는 키들을 처리하고, 캐릭터의 정보를 처리한다.
+* 받는값: X
+* 리턴값: X
+*/
+void ljh_CharTreat()
+{
+    //캐릭터 출력
+    if (char_side == 0) //캐릭터가 오른쪽을 바라보고 있는 경우.
+    {
+        gotoxy(x, y);
+        printf(" o  ");
+        gotoxy(x, y + 1);
+        printf("(|)=");
+        gotoxy(x, y + 2);
+        printf("- - ");
+    }
+    else //캐릭터가 왼쪽을 바라보고 있는 경우.
+    {
+        gotoxy(x, y);
+        printf("  o ");
+        gotoxy(x, y + 1);
+        printf("=(|)");
+        gotoxy(x, y + 2);
+        printf(" - -");
+    }
+
+    //키 입력 처리
+    //오른쪽 방향키.
+    if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+    {
+        char_side = 0;
+
+        if (x != (RIGHT_BOUND - 3)) //맵의 끝에 도달한 경우 더 이동하지 않음.
+        {
+            //이전 캐릭터 지우기
+            gotoxy(x, y);
+            printf("    ");
+
+            if (x <= 7) //왼쪽 경계에서 이전 캐릭터를 지울 때는 x - 7이 음수가 될 가능성이 있다. 이를 배제해줘야 의도대로 출력된다.
+            {
+                gotoxy(2, y + 1);
+                printf("                    ");
+            }
+            else
+            {
+                gotoxy(x - 7, y + 1);
+                printf("                    ");
+            }
+
+            gotoxy(x, y + 2);
+            printf("    ");
+
+            //새 캐릭터 출력하기
+
+            if (move_control_right == MOVE_DEGREE)
+            {
+                x++;
+                move_control_right = 0;
+            }
+            else
+            {
+                move_control_right++;
+            }
+
+            gotoxy(x, y);
+            printf(" o ");
+            gotoxy(x, y + 1);
+            printf("(|)=");
+            gotoxy(x, y + 2);
+            printf("- -");
+
+            if ((attack_condition == 1) && (x <= 69)) //캐릭터가 공격 상태이고 경계에 닫지 않은 경우
+            {
+                gotoxy(x + 4, y + 1);
+                switch (weapon_kind)
+                {
+                case 0:
+                    printf("-|--");
+                    break;
+                case 1:
+                    printf("-|A--");
+                    break;
+                case 2:
+                    printf("-|M---");
+                    break;
+                case 3:
+                    printf("-|P----");
+                    break;
+                }
+            }
+        }
+    }
+
+    //왼쪽 방향키.
+    if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+    {
+        char_side = 1;
+
+        if (x != LEFT_BOUND)
+        {
+            //이전 캐릭터 지우기
+            gotoxy(x, y);
+            printf("    ");
+
+            if (x <= 7) //왼쪽으로 이동 시 이전 캐릭터를 지울 때는 x - 7이 음수가 될 가능성이 있다. 이를 배제해줘야 의도대로 출력된다.
+            {
+                gotoxy(2, y + 1);
+                printf("                    ");
+            }
+            else
+            {
+                gotoxy(x - 7, y + 1);
+                printf("                    ");
+            }
+
+            gotoxy(x, y + 2);
+            printf("    ");
+
+            //새 캐릭터 출력하기
+            if (move_control_left == MOVE_DEGREE)
+            {
+                x--;
+                move_control_left = 0;
+            }
+            else
+            {
+                move_control_left++;
+            }
+
+            gotoxy(x, y);
+            printf("  o ");
+            gotoxy(x, y + 1);
+            printf("=(|)");
+            gotoxy(x, y + 2);
+            printf(" - -");
+
+            if ((attack_condition == 1) && (x >= 7)) //캐릭터가 공격 상태이고 경계에 닫지 않은 경우.
+            {
+                switch (weapon_kind)
+                {
+                case 0:
+                    gotoxy(x - 4, y + 1);
+                    printf("--|-");
+                    break;
+                case 1:
+                    gotoxy(x - 5, y + 1);
+                    printf("--A|-");
+                    break;
+                case 2:
+                    gotoxy(x - 6, y + 1);
+                    printf("---M|-");
+                    break;
+                case 3:
+                    gotoxy(x - 7, y + 1);
+                    printf("----P|-");
+                    break;
+                }
+            }
+        }
+    }
+
+    //윗 방향키 (점프) 관련.
+    if ((GetAsyncKeyState(VK_UP) & 0x8000) && (jump == 0)) //위 화살표 키가 눌리고 점프 중이 아닐 때 수행.
+    {
+        jump = 1;
+    }
+
+    if ((jump == 1) && (jump_across == 0)) //점프 중이고 최대 높이 도달 전일 때 수행.
+    {
+        //이전 캐릭터 지우기
+        gotoxy(x, y);
+        printf("    ");
+
+        if (x <= 7) //왼쪽 경계에서 캐릭터를 지울 때는 x - 7이 음수가 될 가능성이 있다. 이를 배제해줘야 의도대로 출력된다.
+        {
+            gotoxy(2, y + 1);
+            printf("                    ");
+        }
+        else
+        {
+            gotoxy(x - 7, y + 1);
+            printf("                    ");
+        }
+
+        gotoxy(x, y + 2);
+        printf("    ");
+
+        //좌표 변경
+        if (jump_control == JUMP_DEGREE)
+        {
+            y -= JUMP_GRAVITY;
+            jump_control = 0;
+        }
+        else
+        {
+            jump_control++;
+        }
+
+        //새 캐릭터 출력하기
+        if (char_side == 0) //현재 오른쪽으로 움직이고 있는 경우.
+        {
+            gotoxy(x, y);
+            printf(" o ");
+            gotoxy(x, y + 1);
+            printf("(|)=");
+            gotoxy(x, y + 2);
+            printf("- -");
+
+            if ((attack_condition == 1) && (x <= 69)) //캐릭터가 공격 상태이고 경계에 닫지 않은 경우
+            {
+                gotoxy(x + 4, y + 1);
+                switch (weapon_kind)
+                {
+                case 0:
+                    printf("-|--");
+                    break;
+                case 1:
+                    printf("-|A--");
+                    break;
+                case 2:
+                    printf("-|M---");
+                    break;
+                case 3:
+                    printf("-|P----");
+                    break;
+                }
+            }
+        }
+        else //현재 왼쪽으로 움직이고 있는 경우.
+        {
+            gotoxy(x, y);
+            printf("  o ");
+            gotoxy(x, y + 1);
+            printf("=(|)");
+            gotoxy(x, y + 2);
+            printf(" - -");
+
+            if ((attack_condition == 1) && (x >= 7)) //캐릭터가 공격 상태이고 경계에 닫지 않은 경우.
+            {
+                switch (weapon_kind)
+                {
+                case 0:
+                    gotoxy(x - 4, y + 1);
+                    printf("--|-");
+                    break;
+                case 1:
+                    gotoxy(x - 5, y + 1);
+                    printf("--A|-");
+                    break;
+                case 2:
+                    gotoxy(x - 6, y + 1);
+                    printf("---M|-");
+                    break;
+                case 3:
+                    gotoxy(x - 7, y + 1);
+                    printf("----P|-");
+                    break;
+                }
+            }
+        }
+    }
+
+    if (y == JUMP_BOUND)
+    {
+        jump_across++;
+    }
+
+    if ((jump == 1) && (jump_across >= 1)) //점프 중이고 최대 높이 도달 후일 때 수행.
+    {
+        //이전 캐릭터 지우기
+        gotoxy(x, y);
+        printf("    ");
+
+        if (x <= 7) //왼쪽 경계에서 이전 캐릭터를 지울 때는 x - 7이 음수가 될 가능성이 있다. 이를 배제해줘야 의도대로 출력된다.
+        {
+            gotoxy(2, y + 1);
+            printf("                    ");
+        }
+        else
+        {
+            gotoxy(x - 7, y + 1);
+            printf("                    ");
+        }
+
+        gotoxy(x, y + 2);
+        printf("    ");
+
+        //좌표 변경
+        if (jump_control == JUMP_DEGREE)
+        {
+            y += JUMP_GRAVITY;
+            jump_control = 0;
+        }
+        else
+        {
+            jump_control++;
+        }
+
+        //새 캐릭터 출력하기
+        if (char_side == 0) //현재 오른쪽으로 움직이고 있는 경우.
+        {
+            gotoxy(x, y);
+            printf(" o ");
+            gotoxy(x, y + 1);
+            printf("(|)=");
+            gotoxy(x, y + 2);
+            printf("- -");
+
+            if ((attack_condition == 1) && (x <= 69)) //캐릭터가 공격 상태이고 경계에 닫지 않은 경우
+            {
+                gotoxy(x + 4, y + 1);
+                switch (weapon_kind)
+                {
+                case 0:
+                    printf("-|--");
+                    break;
+                case 1:
+                    printf("-|A--");
+                    break;
+                case 2:
+                    printf("-|M---");
+                    break;
+                case 3:
+                    printf("-|P----");
+                    break;
+                }
+            }
+        }
+        else //현재 왼쪽으로 움직이고 있는 경우.
+        {
+            gotoxy(x, y);
+            printf("  o ");
+            gotoxy(x, y + 1);
+            printf("=(|)");
+            gotoxy(x, y + 2);
+            printf(" - -");
+
+            if ((attack_condition == 1) && (x >= 7)) //캐릭터가 공격 상태이고 경계에 닫지 않은 경우.
+            {
+                switch (weapon_kind)
+                {
+                case 0:
+                    gotoxy(x - 4, y + 1);
+                    printf("--|-");
+                    break;
+                case 1:
+                    gotoxy(x - 5, y + 1);
+                    printf("--A|-");
+                    break;
+                case 2:
+                    gotoxy(x - 6, y + 1);
+                    printf("---M|-");
+                    break;
+                case 3:
+                    gotoxy(x - 7, y + 1);
+                    printf("----P|-");
+                    break;
+                }
+            }
+        }
+    }
+
+    if (y >= (DOWN_BOUND - 2))
+    {
+        y = (DOWN_BOUND - 2);
+        jump = 0;
+        jump_across = 0;
+    }
+
+    //스페이스바(공격).
+    space_cooltime_last_time = time(NULL); //공격 상태 종료 이후 시점.
+
+    if ((space_cooltime == 1) && (difftime(space_cooltime_last_time, space_cooltime_start_time) >= ATTACK_COOLTIME)) //쿨타임 상태로 표시되어 있는 경우.
+    {
+        space_cooltime = 0;
+    }
+
+    if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && (space_cooltime == 0)) //space바 입력 중이고, 쿨타임 상태가 아닌 경우.
+    {
+        attack_condition = 1;
+        space_start_time = time(NULL); //space바 누른 시점 저장.
+
+        //캐릭터가 움직이지 않을 때 무기 출력하기.
+        if (char_side == 0) //현재 오른쪽을 바라보고 있는 경우.
+        {
+            if (x <= 69) //경계에 닫지 않은 경우.
+            {
+                //지우기
+                if (x <= 7) //왼쪽 경계에서 이전 캐릭터를 지울 때는 x - 7이 음수가 될 가능성이 있다. 이를 배제해줘야 의도대로 출력된다.
+                {
+                    gotoxy(2, y + 1);
+                    printf("                    ");
+                }
+                else
+                {
+                    gotoxy(x - 7, y + 1);
+                    printf("                    ");
+                }
+
+                //출력하기
+                gotoxy(x, y + 1);
+                printf("(|)=");
+
+                gotoxy(x + 4, y + 1);
+                switch (weapon_kind)
+                {
+                case 0:
+                    printf("-|--");
+                    break;
+                case 1:
+                    printf("-|A--");
+                    break;
+                case 2:
+                    printf("-|M---");
+                    break;
+                case 3:
+                    printf("-|P----");
+                    break;
+                }
+            }
+        }
+        else //현재 왼쪽을 바라보고 있는 경우
+        {
+            if (x >= 7) //경계에 닫지 않은 경우.
+            {
+                //지우기
+                if (x <= 7) //왼쪽으로 이동 시 이전 캐릭터를 지울 때는 x - 7이 음수가 될 가능성이 있다. 이를 배제해줘야 의도대로 출력된다.
+                {
+                    gotoxy(2, y + 1);
+                    printf("                    ");
+                }
+                else
+                {
+                    gotoxy(x - 7, y + 1);
+                    printf("                    ");
+                }
+
+                //출력하기
+                gotoxy(x, y + 1);
+                printf("=(|)");
+
+                switch (weapon_kind)
+                {
+                case 0:
+                    gotoxy(x - 4, y + 1);
+                    printf("--|-");
+                    break;
+                case 1:
+                    gotoxy(x - 5, y + 1);
+                    printf("--A|-");
+                    break;
+                case 2:
+                    gotoxy(x - 6, y + 1);
+                    printf("---M|-");
+                    break;
+                case 3:
+                    gotoxy(x - 7, y + 1);
+                    printf("----P|-");
+                    break;
+                }
+            }
+        }
+    }
+
+    if (attack_condition == 1) //현재 공격 상태인 경우.
+    {
+        long long space_last_time = time(NULL); //space바 누른 이후 시점.
+
+        if (difftime(space_last_time, space_start_time) >= ATTACK_CONDITION_TIME) //시작 이후 특정 시간(공격 상태를 지속할 시간)이 지난 경우.
+        {
+            space_cooltime_start_time = time(NULL); //공격 상태 종료 시점.
+            space_cooltime = 1;
+
+            attack_condition = 0;
+
+            //무기 지우고 다시 출력
+            if (x <= 7) //왼쪽 경계에서 이전 캐릭터를 지울 때는 x - 7이 음수가 될 가능성이 있다. 이를 배제해줘야 의도대로 출력된다.
+            {
+                gotoxy(2, y + 1);
+                printf("                    ");
+            }
+            else
+            {
+                gotoxy(x - 7, y + 1);
+                printf("                    ");
+            }
+
+            switch (char_side)
+            {
+            case 0:
+                gotoxy(x, y + 1);
+                printf("(|)=");
+                break;
+            case 1:
+                gotoxy(x, y + 1);
+                printf("=(|)");
+                break;
+            }
+        }
+    }
+
+
+    //j, k, l(무기 구매).
+    if ((GetAsyncKeyState(0x4A) & 0x8000) && money >= WEAPON_PRICE_1A)//AZ 백신
+    {
+        if (weapon_kind == 1 && weapon_rank == 1 && money >= WEAPON_PRICE_2A) //2차 접종.
+        {
+            money = money - WEAPON_PRICE_2A;
+            weapon_rank++;
+        }
+
+        if (weapon_rank == 0) //1차 접종.
+        {
+            money = money - WEAPON_PRICE_1A;
+            weapon_damage = ATTACK_A_DAMAGE;
+            weapon_kind = 1;
+            weapon_rank++;
+
+            gotoxy(3, 2);
+            printf("AZ 접종 완료! 항체가 생기는 것이 느껴집니다!");
+            gotoxy(3, 3);
+            printf("q를 눌려 게임으로 돌아가세요.");
+            while (1)
+            {
+                char trash_j = getch();
+                if (trash_j == 'q')
+                {
+                    system("cls");
+                    break;
+                }
+            }
+        }
+    }
+    if ((GetAsyncKeyState(0x4B) & 0x8000) && money >= WEAPON_PRICE_1M)
+    {
+        if (weapon_kind == 2 && weapon_rank == 1 && money >= WEAPON_PRICE_2M)
+        {
+            money = money - WEAPON_PRICE_2M;
+            weapon_rank++;
+        }
+
+        if (weapon_rank == 0)
+        {
+            money = money - WEAPON_PRICE_1M;
+            weapon_damage = ATTACK_M_DAMAGE;
+            weapon_kind = 2;
+            weapon_rank++;
+
+            gotoxy(3, 2);
+            printf("모더나 접종 완료! 공격력이 증가했습니다!");
+            gotoxy(3, 3);
+            printf("q를 눌려 게임으로 돌아가세요.");
+            while (1)
+            {
+                char trash_k = getch();
+                if (trash_k == 'q')
+                {
+                    system("cls");
+                    break;
+                }
+            }
+        }
+    }
+    if ((GetAsyncKeyState(0x4C) & 0x8000) && money >= WEAPON_PRICE_1P)
+    {
+        if (weapon_kind == 3 && weapon_rank == 1 && money >= WEAPON_PRICE_2P)
+        {
+            money = money - WEAPON_PRICE_2P;
+            weapon_rank++;
+        }
+
+        if (weapon_rank == 0)
+        {
+            money = money - WEAPON_PRICE_1P;
+            weapon_damage = ATTACK_P_DAMAGE;
+            weapon_kind = 3;
+            weapon_rank++;
+
+            gotoxy(3, 2);
+            printf("화이자 접종 완료! 부작용 따윈 없습니다!");
+            gotoxy(3, 3);
+            printf("q를 눌려 게임으로 돌아가세요.");
+            while (1)
+            {
+                char trash_l = getch();
+                if (trash_l == 'q')
+                {
+                    system("cls");
+                    break;
+                }
+            }
+        }
+    }
+
+
+    //h(도움말).
+    if (GetAsyncKeyState(0x48) & 0x8000)
+    {
+        insuk_help();
+    }
+
+
+    //t(강제종료).
+    if (GetAsyncKeyState(0x54) & 0x8000)
+    {
+        char key;
+        do
+        {
+            system("cls");
+
+            gotoxy(0, 0);//상 
+            for (int i = 0; i < 40; i++)
+            {
+                printf("□");
+            }
+            gotoxy(0, 24);//하
+            for (int i = 0; i < 40; i++)
+            {
+                printf("□");
+            }
+            for (int i = 1; i < 24; i++)//좌  
+            {
+                gotoxy(0, i);
+                printf("□");
+            }
+            for (int i = 1; i < 24; i++)//우 
+            {
+                gotoxy(78, i);
+                printf("□");
+            }
+
+            gotoxy(22, 7);
+            printf("#  #  ##  #   # #### ###     # ####");
+            gotoxy(22, 8);
+            printf("## # #  #  # #   ##  #  #   ## #  #");
+            gotoxy(22, 9);
+            printf("# ## #  #  # #   ##  #  #    # ####");
+            gotoxy(22, 10);
+            printf("#  #  ##    #   #### ###    ###   #");
+            gotoxy(22, 13);
+            printf("정말로 게임을 종료하시겠습니까?");
+            gotoxy(22, 14);
+            printf("정말로 종료하려면 q를 눌러주세요.");
+            key = _getch();
+        }         while (key != 'q');
+        gotoxy(22, 16);
+        printf("게임을 종료합니다.");
+        gotoxy(0, 25);
+        exit(0);
+    }
+
+
+    //n(게임 재시작).
+    if (GetAsyncKeyState(0x4e) & 0x8000)
+    {
+        system("cls");
+        sh_Restart();
+    }
+
+
+    sh_HP();
+    sh_Victory();
+
+    return;
+}
+
+
+/*
+* 이름 : sh_Restart
+* 기능 : 키 n을 누를경우 게임 속 값들을 초기화하고 처음부터 다시 시작하게 함
+* 초기화 목록(weapon_rank, weapon_damage, weapon_kind, HP, money, 몬스터 값들, 캐릭터 위치, 게임 플레이 타임)
+* 받는 값 : X
+* 리턴 값 : X
+*/
+void sh_Restart()
+{
+    //무기
+    weapon_rank = 0;
+    weapon_damage = ATTACK_N_DAMAGE;
+    weapon_kind = 0;
+
+    //체력
+    HP = 100;
+    HP_condition = 0;
+
+    //돈
+    money = 0;
+
+    //게임 시작 시간 저장
+    game_start_time = time(NULL);
+
+    //점프 관련 (점프 중에 초기화해야 하는 경우를 위한 것)
+    jump = 0;
+    jump_across = 0;
+    char_side = 0;
+    jump_control = JUMP_DEGREE;
+
+    //캐릭터 공격 상태 (공격 중에 초기화해야 하는 경우를 위한 것)
+    attack_condition = 0;
+
+    //캐릭터 초기좌표
+    x = 5;
+    y = DOWN_BOUND - 2;
+
+    //캐릭터초기출력
+    gotoxy(x, y); //캐릭터 초기좌표 지정, 초기 캐릭터 출력. (오른쪽)
+    printf(" o ");
+    gotoxy(x, y + 1);
+    printf("(|)=");
+    gotoxy(x, y + 2);
+    printf("- -");
+
+    //시간
+    game_start_time = time(NULL);
+
+    //몬스터
+    for (int i = 0; i < 15; i = i + 3)
+    {
+        monster[3][i] = MONSTER_FIRST_X_POSITION;
+    }
+    for (int i = 1; i < 15; i = i + 3)
+    {
+        monster[3][i] = MONSTER_SECOND_X_POSITION;
+    }
+    for (int i = 2; i < 15; i = i + 3)
+    {
+        monster[3][i] = MONSTER_THIRD_X_POSITION;
+    }
+
+    for (int i = 0; i < 15; i++)
+    {
+        monster[0][i] = 1;//몬스터 점프 상태 지정.[0]
+        monster[1][i] = 1;//몬스터 점프 최대높이 도달 지정.[1]
+        monster[2][i] = 0;//몬스터 점프 방향 지정.[2]
+        monster[4][i] = MONSTER_Y_POSITION; //몬스터 초기 Y좌표 지정.[4]
+        monster[5][i] = MONSTER_FIRST_HP; //몬스터 1단계 체력 지정.[5]
+        monster[6][i] = MONSTER_FIRST_MONEY;//몬스터 1단계 골드 지정.[6]
+        monster[7][i] = MONSTER_FIRST_DAMAGE;//몬스터 1단계 공격력 지정.[7]
+        monster[8][i] = MONSTER_FIRST_RANK;//몬스터 1단계 변이 단계 지정.[8]
+    }
+
+    return;
+}
+
+
+/*
+* 이름 : sh_HP(HP관리, 게임실패함수)
+* 기능 : 체력을 1초마다 리젠시키고 체력이 0이 될 경우 게임 패배 상태를 보여준다.
+* HP_condition은 체력 리젠 상태를 의미, 0일경우 체력 리젠 x 1일경우 체력 리젠 o
+* 받는 값: X
+* 리턴 값: X
+*/
+void sh_HP()
+{
+    while (HP <= 0) // 체력이 0이하일 때 
+    {
+        char option;
+        system("cls");
+
+        gotoxy(0, 0);//상 
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+        gotoxy(0, 24);//하
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+
+        for (int i = 1; i < 24; i++)//좌  
+        {
+            gotoxy(0, i);
+            printf("□");
+        }
+        for (int i = 1; i < 24; i++)//우 
+        {
+            gotoxy(78, i);
+            printf("□");
+        }
+
+        gotoxy(22, 7);
+        printf("#  #  ##  #   # #### ###     # ####");
+        gotoxy(22, 8);
+        printf("## # #  #  # #   ##  #  #   ## #  #");
+        gotoxy(22, 9);
+        printf("# ## #  #  # #   ##  #  #    # ####");
+        gotoxy(22, 10);
+        printf("#  #  ##    #   #### ###    ###   #");
+        gotoxy(22, 15);
+        printf("당신은 코로나에 감염되었습니다...");
+        gotoxy(25, 16);
+        printf("재도전(n) or 게임 종료(t)");
+        while (1)
+        {
+            option = getch();
+            if (option == 'n')
+            {
+                sh_Restart();
+                break;
+            }
+            if (option == 't')
+            {
+                gotoxy(0, 25);
+                exit(0);
+            }
+        }
+        system("cls");
+
+    }
+
+    if (HP < 100 && HP > 0 && HP_condition == 0) //체력 리젠 상태가 0 이고 체력이 0초과 100미만일 때 
+    {
+        HP_start = time(NULL);
+        HP_condition = 1;
+    }
+
+    if (HP == 100)//체력이 100일 때
+    {
+        HP_condition = 0;
+    }
+
+    if (HP_condition == 1)//체력 리젠 상태가 1일 때, 1초마다 체력이 1씩 증가하고 체력 리젠 상태를 0으로 돌린다.
+    {
+        HP_end = time(NULL);
+        if ((HP_end - HP_start) == 1)
+        {
+            HP_condition = 0;
+            HP++;
+        }
+    }
+}
+
+
+/*
+* 이름 : sh_Victory(게임성공함수)
+* 기능: 무기 랭크를 2를 달성할경우 랭킹을 반영 및 출력하고 화면을 초기화한 후 게임 승리 문구를 띄운다.
+* 받는 값 : X
+* 리턴 값 : X
+*/
+void sh_Victory()
+{
+    char key;
+    if (weapon_rank == 2)
+    {
+        //랭크에 기록 반영
+        insuk_saverank();
+
+        //랭크 출력
+        insuk_rankload();
+
+        //문구 출력
+        system("cls");
+
+        gotoxy(0, 0);//상 
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+        gotoxy(0, 24);//하
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+
+        for (int i = 1; i < 24; i++)//좌  
+        {
+            gotoxy(0, i);
+            printf("□");
+        }
+        for (int i = 1; i < 24; i++)//우 
+        {
+            gotoxy(78, i);
+            printf("□");
+        }
+
+        gotoxy(22, 7);
+        printf("#  #  ##  #   # #### ###     # ####");
+        gotoxy(22, 8);
+        printf("## # #  #  # #   ##  #  #   ## #  #");
+        gotoxy(22, 9);
+        printf("# ## #  #  # #   ##  #  #    # ####");
+        gotoxy(22, 10);
+        printf("#  #  ##    #   #### ###    ###   #");
+        gotoxy(16, 13);
+        printf("당신은 성공적으로 백신의 2차 접종을 맞으셨습니다.");
+        gotoxy(16, 14);
+        printf("COVID 19으로 부터 살아남으시느라 고생하셨습니다.");
+        gotoxy(24, 15);
+        printf("마음 놓고 일상생활을 즐기세요!");
+        gotoxy(21, 17);
+
+        printf("아무 키나 누르면 게임이 종료됩니다.");
+
+        key = getch();
+        gotoxy(0, 26);
+        exit(0);
+    }
+}
+
+/*
+* 이름
+* 기능
+* 받는 값
+* 리턴 값
+*/
+void sh_monster()
+{
+    game_play_time = time(NULL);
+    sh_monster_change(); //랭크에 따라 체력, 공격력, 돈 변화.
+    sh_monster_create();
+    sh_monster_move(); //x,y좌표 수정.
+    sh_monster_print(); //x, y 좌표에 따라 몬스터 출력.
+    sh_monster_HP(); //몬스터 체력 sh
+}
+
+/*
+* 이름 : sh_monster_print()
+* 기능 : 몬스터의 좌표를 기준으로 몬스터를 출력하는 함수(체력이 0 초과일 때부터 출력)
+* 받는 값 : X
+* 리턴 값 : X
+*/
+void sh_monster_print()
+{
+    for (int i = 0; i < monster_time; i++)
+    {
+        if (monster[8][i] == MONSTER_FIRST_RANK && monster[5][i] > 0)
+        {
+            gotoxy(monster[3][i], monster[4][i]);
+            printf(" W ");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf(">.<");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf(" M ");
+        }
+        if (monster[8][i] == MONSTER_SECOND_RANK && monster[5][i] > 0)
+        {
+            gotoxy(monster[3][i], monster[4][i]);
+            printf(" W ");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf(">A<");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf(" M ");
+        }
+        if (monster[8][i] == MONSTER_THIRD_RANK && monster[5][i] > 0)
+        {
+            gotoxy(monster[3][i], monster[4][i]);
+            printf(".W.");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf(">B<");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf(".M.");
+        }
+        if (monster[8][i] == MONSTER_FOURTH_RANK && monster[5][i] > 0)
+        {
+            gotoxy(monster[3][i], monster[4][i]);
+            printf("oWo");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf(">G<");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf("oMo");
+        }
+        if (monster[8][i] == MONSTER_FIFTH_RANK && monster[5][i] > 0)
+        {
+            gotoxy(monster[3][i], monster[4][i]);
+            printf("!W!");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf(">D<");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf("!M!");
+        }
+    }
+
+}
+
+
+/*
+* 이름 : sh_monster_move()
+* 기능 : 게임 플레이 타임에 따라 몬스터의 개체수를 수정, 몬스터의 좌표를 수정(점프).
+* 변화시키는 값 : 점프 상태, 점프 최대높이 도달 상태, 점프 방향, x, y 좌표 ([1][2][3][4][5])
+* 받는 값 : X
+* 리턴 값 : X
+*/
+void sh_monster_move()
+{
+    if (game_play_time - game_start_time == 0)
+    {
+        monster_time = 3;
+    }
+    if (game_play_time - game_start_time == 6)
+    {
+        monster_time = 6;
+    }
+    if (game_play_time - game_start_time == 12)
+    {
+        monster_time = 9;
+    }
+    if (game_play_time - game_start_time == 18)
+    {
+        monster_time = 12;
+    }
+    if (game_play_time - game_start_time == 24)
+    {
+        monster_time = 15;
+
+    }
+    for (int i = 0; i < monster_time; i++)
+    {
+
+        if (monster[4][i] == MONSTER_JUMP_BOUND) //최대 높이 도달 시.
+        {
+            monster[1][i] = 1;
+        }
+        if (monster[0][i] == 1 && monster[1][i] == 1) //최대 높이 도달 후 떨어질 때.
+        {
+            gotoxy(monster[3][i], monster[4][i]);
+            printf("   ");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf("   ");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf("   ");
+
+            //떨어질 때 좌표 변경
+            if (monster_jump_control == MONSTER_JUMP_DEGREE)
+            {
+                monster[4][i] += JUMP_GRAVITY;
+                monster_jump_control = 0;
+            }
+            else
+            {
+                monster_jump_control++;
+            }
+        }
+
+        if (monster[4][i] >= DOWN_BOUND - 2)//땅에 도달 시.
+        {
+            monster[4][i] = DOWN_BOUND - 2;
+            monster[0][i] = 0;
+            monster[1][i] = 0;
+        }
+
+        for (long long k = 1; k < 100; k++) //점프를 하려고 할 때.
+        {
+            if (game_play_time - game_start_time == MONSTER_JUMP_DELAY * k && monster[0][i] == 0)
+            {
+                monster[0][i] = 1;
+                srand((unsigned int)time(NULL));
+                int num = rand();
+                if (num % 5 == 0 || num % 5 == 1 || num % 5 == 2)
+                {
+                    monster[2][i] = 0;
+                }
+                if (num % 5 == 3 || num % 5 == 4)
+                {
+                    monster[2][i] = 1;
+                }
+            }
+        }
+
+        if (monster[0][i] == 1 && monster[1][i] == 0 && monster[2][i] == 0) //올라갈 때 
+        {
+            gotoxy(monster[3][i], monster[4][i]);
+            printf("   ");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf("   ");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf("   ");
+
+            if (monster_jump_control == MONSTER_JUMP_DEGREE) // 점프 주기 조절
+            {
+                if (monster[3][i] != (RIGHT_BOUND - 2)) // 오른쪽 벽에 막히지 않을 경우
+                {
+                    monster[3][i] += JUMP_GRAVITY;//오른쪽
+                }
+                monster[4][i] -= JUMP_GRAVITY;//점프
+                monster_jump_control = 0;
+            }
+            else
+            {
+                monster_jump_control++;
+            }
+        }
+        if (monster[4][i] == MONSTER_JUMP_BOUND)
+        {
+            monster[1][i] = 1;
+        }
+
+        if (monster[0][i] == 1 && monster[1][i] == 0 && monster[2][i] == 1) //올라갈 때 
+        {
+            gotoxy(monster[3][i], monster[4][i]);
+            printf("   ");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf("   ");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf("   ");
+
+            if (monster_jump_control == MONSTER_JUMP_DEGREE) //점프 주기 조절
+            {
+                if (monster[3][i] != LEFT_BOUND)//왼쪽 벽에 막히지 않을 경우.
+                {
+                    monster[3][i] -= JUMP_GRAVITY;//왼쪽
+                }
+                monster[4][i] -= JUMP_GRAVITY;//점프
+                monster_jump_control = 0;
+            }
+            else
+            {
+                monster_jump_control++;
+            }
+        }
+        if (monster[4][i] == MONSTER_JUMP_BOUND)
+        {
+            monster[1][i] = 1;
+        }
+    }
+}
+
+/*
+* 이름 : sh_monster_change
+* 기능 : 몬스터를 시간에 따라 변화시키는 함수. 시간이 되면 몬스터를 모두 삭제시킴.
+* 변화 시키는 값 :  돈, 데미지, 랭크, 체력 ([5][6][7][8])
+* 받는 값 : X
+* 리턴 값 : X
+*/
+
+void sh_monster_change()
+{
+
+    //1분마다 몬스터의 랭크 변화.
+    if (game_play_time - game_start_time == 60)
+    {
+        gotoxy(3, 2);
+        printf("바이러스에게 알파 변이가 발생하였습니다!");
+        gotoxy(3, 3);
+        printf("강해진 바이러스에 대비하세요!");
+        gotoxy(3, 4);
+        printf("q를 눌려 게임으로 돌아가세요.");
+        while (1)
+        {
+            char trash_l = getch();
+            if (trash_l == 'q')
+            {
+                system("cls");
+                break;
+
+            }
+        }
+        for (int i = 0; i < 15; i++)
+        {
+            monster[8][i] = MONSTER_SECOND_RANK;
+            monster[5][i] = -1;
+        }
+    }
+    if (game_play_time - game_start_time == 120)
+    {
+        gotoxy(3, 2);
+        printf("바이러스에게 베타 변이가 발생하였습니다! 강해진 바이러스에 대비하세요!");
+        gotoxy(3, 3);
+        printf("강해진 바이러스에 대비하세요!");
+        gotoxy(3, 4);
+        printf("q를 눌려 게임으로 돌아가세요.");
+        while (1)
+        {
+            char trash_l = getch();
+            if (trash_l == 'q')
+            {
+                system("cls");
+                break;
+            }
+        }
+        for (int i = 0; i < 15; i++)
+        {
+            monster[8][i] = MONSTER_THIRD_RANK;
+            monster[5][i] = -1;
+        }
+    }
+    if (game_play_time - game_start_time == 180)
+    {
+        gotoxy(3, 2);
+        printf("바이러스에게 감마 변이가 발생하였습니다! 강해진 바이러스에 대비하세요!");
+        gotoxy(3, 3);
+        printf("강해진 바이러스에 대비하세요!");
+        gotoxy(3, 4);
+        printf("q를 눌려 게임으로 돌아가세요.");
+        while (1)
+        {
+            char trash_l = getch();
+            if (trash_l == 'q')
+            {
+                system("cls");
+                break;
+            }
+        }
+        for (int i = 0; i < 15; i++)
+        {
+            monster[8][i] = MONSTER_FOURTH_RANK;
+            monster[5][i] = -1;
+        }
+    }
+    if (game_play_time - game_start_time == 240)
+    {
+        gotoxy(3, 2);
+        printf("바이러스에게 델타 변이가 발생하였습니다! 강해진 바이러스에 대비하세요!");
+        gotoxy(3, 3);
+        printf("강해진 바이러스에 대비하세요!");
+        gotoxy(3, 4);
+        printf("q를 눌려 게임으로 돌아가세요.");
+        while (1)
+        {
+            char trash_l = getch();
+            if (trash_l == 'q')
+            {
+                system("cls");
+                break;
+            }
+        }
+        for (int i = 0; i < 15; i++)
+        {
+            monster[8][i] = MONSTER_FIFTH_RANK;
+            monster[5][i] = -1;
+        }
+    }
+
+
+    //몬스터의 랭크에 따라 설정값들 변화.
+    for (int i = 0; i < 15; i++)
+    {
+        if (monster[8][i] == MONSTER_SECOND_RANK)
+        {
+            monster[6][i] = MONSTER_SECOND_MONEY;
+            monster[7][i] = MONSTER_SECOND_DAMAGE;
+        }
+        if (monster[8][i] == MONSTER_THIRD_RANK)
+        {
+            monster[6][i] = MONSTER_THIRD_MONEY;
+            monster[7][i] = MONSTER_THIRD_DAMAGE;
+        }
+        if (monster[8][i] == MONSTER_FOURTH_RANK)
+        {
+            monster[6][i] = MONSTER_FOURTH_MONEY;
+            monster[7][i] = MONSTER_FOURTH_DAMAGE;
+        }
+        if (monster[8][i] == MONSTER_FIFTH_RANK)
+        {
+            monster[6][i] = MONSTER_FIFTH_MONEY;
+            monster[7][i] = MONSTER_FIFTH_DAMAGE;
+        }
+    }
+}
+
+/*
+* 이름 : sh_monster_create()
+* 기능 : 몬스터를 시간대마다 생성하고 설정함.
+* 설정 목록 : 점프 상태, 최대높이 도달 상태, 점프 방향, 체력, (x, y 좌표) ([0][1][2][3][4][5])
+* 받는 값 : X
+* 리턴 값 : X
+*/
+void sh_monster_create()
+{
+    int j, k = 0; //for문을 위한 지역변수 설정
+    for (k = 0; k < 10; k++)
+    {
+        if (game_play_time - game_start_time == 30 * k) //0초, 30초마다 지정.(x, y 좌표를 설정)
+        {
+
+            for (j = 0; j < 3; j++)
+            {
+                gotoxy(monster[3][j], monster[4][j]);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 1);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 2);
+                printf("   ");
+                monster[0][j] = 1;//몬스터 점프 상태 지정.[0]
+                monster[1][j] = 1;//몬스터 점프 최대높이 도달 지정.[1]
+                monster[2][j] = 0;//몬스터 점프 방향 지정.[2]
+                monster[4][j] = MONSTER_Y_POSITION;
+                if (monster[8][j] == 0)
+                {
+                    monster[5][j] = MONSTER_FIRST_HP;
+                }
+                if (monster[8][j] == 1)
+                {
+                    monster[5][j] = MONSTER_SECOND_HP;
+                }
+                if (monster[8][j] == 2)
+                {
+                    monster[5][j] = MONSTER_THIRD_HP;
+                }
+                if (monster[8][j] == 3)
+                {
+                    monster[5][j] = MONSTER_FOURTH_HP;
+                }
+                if (monster[8][j] == 4)
+                {
+                    monster[5][j] = MONSTER_FIFTH_HP;
+                }
+            }
+            monster[3][0] = MONSTER_FIRST_X_POSITION;
+            monster[3][1] = MONSTER_SECOND_X_POSITION;
+            monster[3][2] = MONSTER_THIRD_X_POSITION;
+
+        }
+        if (game_play_time - game_start_time == 6 + 30 * k) //6초, 36초마다 생성
+        {
+            for (j = 3; j < 6; j++)
+            {
+                gotoxy(monster[3][j], monster[4][j]);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 1);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 2);
+                printf("   ");
+                monster[0][j] = 1;//몬스터 점프 상태 지정.[0]
+                monster[1][j] = 1;//몬스터 점프 최대높이 도달 지정.[1]
+                monster[2][j] = 0;//몬스터 점프 방향 지정.[2]
+                monster[4][j] = MONSTER_Y_POSITION;
+                if (monster[8][j] == 0)
+                {
+                    monster[5][j] = MONSTER_FIRST_HP;
+                }
+                if (monster[8][j] == 1)
+                {
+                    monster[5][j] = MONSTER_SECOND_HP;
+                }
+                if (monster[8][j] == 2)
+                {
+                    monster[5][j] = MONSTER_THIRD_HP;
+                }
+                if (monster[8][j] == 3)
+                {
+                    monster[5][j] = MONSTER_FOURTH_HP;
+                }
+                if (monster[8][j] == 4)
+                {
+                    monster[5][j] = MONSTER_FIFTH_HP;
+                }
+            }
+            monster[3][3] = MONSTER_FIRST_X_POSITION;
+            monster[3][4] = MONSTER_SECOND_X_POSITION;
+            monster[3][5] = MONSTER_THIRD_X_POSITION;
+        }
+        if (game_play_time - game_start_time == 12 + 30 * k) //12초, 42초마다 생성
+        {
+            for (j = 6; j < 9; j++)
+            {
+                gotoxy(monster[3][j], monster[4][j]);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 1);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 2);
+                printf("   ");
+                monster[0][j] = 1;//몬스터 점프 상태 지정.[0]
+                monster[1][j] = 1;//몬스터 점프 최대높이 도달 지정.[1]
+                monster[2][j] = 0;//몬스터 점프 방향 지정.[2]
+                monster[4][j] = MONSTER_Y_POSITION;
+                if (monster[8][j] == 0)
+                {
+                    monster[5][j] = MONSTER_FIRST_HP;
+                }
+                if (monster[8][j] == 1)
+                {
+                    monster[5][j] = MONSTER_SECOND_HP;
+                }
+                if (monster[8][j] == 2)
+                {
+                    monster[5][j] = MONSTER_THIRD_HP;
+                }
+                if (monster[8][j] == 3)
+                {
+                    monster[5][j] = MONSTER_FOURTH_HP;
+                }
+                if (monster[8][j] == 4)
+                {
+                    monster[5][j] = MONSTER_FIFTH_HP;
+                }
+            }
+            monster[3][6] = MONSTER_FIRST_X_POSITION;
+            monster[3][7] = MONSTER_SECOND_X_POSITION;
+            monster[3][8] = MONSTER_THIRD_X_POSITION;
+        }
+        if (game_play_time - game_start_time == 18 + 30 * k) //18초, 48초마다 생성
+        {
+            for (j = 9; j < 12; j++)
+            {
+                gotoxy(monster[3][j], monster[4][j]);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 1);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 2);
+                printf("   ");
+                monster[0][j] = 1;//몬스터 점프 상태 지정.[0]
+                monster[1][j] = 1;//몬스터 점프 최대높이 도달 지정.[1]
+                monster[2][j] = 0;//몬스터 점프 방향 지정.[2]
+                monster[4][j] = MONSTER_Y_POSITION;
+                if (monster[8][j] == 0)
+                {
+                    monster[5][j] = MONSTER_FIRST_HP;
+                }
+                if (monster[8][j] == 1)
+                {
+                    monster[5][j] = MONSTER_SECOND_HP;
+                }
+                if (monster[8][j] == 2)
+                {
+                    monster[5][j] = MONSTER_THIRD_HP;
+                }
+                if (monster[8][j] == 3)
+                {
+                    monster[5][j] = MONSTER_FOURTH_HP;
+                }
+                if (monster[8][j] == 4)
+                {
+                    monster[5][j] = MONSTER_FIFTH_HP;
+                }
+            }
+            monster[3][9] = MONSTER_FIRST_X_POSITION;
+            monster[3][10] = MONSTER_SECOND_X_POSITION;
+            monster[3][11] = MONSTER_THIRD_X_POSITION;
+        }
+        if (game_play_time - game_start_time == 24 + 30 * k) //24초, 54초마다 생성
+        {
+            for (j = 12; j < 15; j++)
+            {
+                gotoxy(monster[3][j], monster[4][j]);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 1);
+                printf("   ");
+                gotoxy(monster[3][j], monster[4][j] + 2);
+                printf("   ");
+                monster[0][j] = 1;//몬스터 점프 상태 지정.[0]
+                monster[1][j] = 1;//몬스터 점프 최대높이 도달 지정.[1]
+                monster[2][j] = 0;//몬스터 점프 방향 지정.[2]
+                monster[4][j] = MONSTER_Y_POSITION;
+                if (monster[8][j] == 0)
+                {
+                    monster[5][j] = MONSTER_FIRST_HP;
+                }
+                if (monster[8][j] == 1)
+                {
+                    monster[5][j] = MONSTER_SECOND_HP;
+                }
+                if (monster[8][j] == 2)
+                {
+                    monster[5][j] = MONSTER_THIRD_HP;
+                }
+                if (monster[8][j] == 3)
+                {
+                    monster[5][j] = MONSTER_FOURTH_HP;
+                }
+                if (monster[8][j] == 4)
+                {
+                    monster[5][j] = MONSTER_FIFTH_HP;
+                }
+            }
+            monster[3][12] = MONSTER_FIRST_X_POSITION;
+            monster[3][13] = MONSTER_SECOND_X_POSITION;
+            monster[3][14] = MONSTER_THIRD_X_POSITION;
+        }
+    }
+}
+
+/*
+* 이름 : sh_monster_HP
+* 기능 : 몬스터의 체력이 0이 될 경우 플레이어에게 돈을 증가시키고 몬스터의 형태가 사라지게함.
+* 받는 값 : X
+* 리턴 값 : X
+*/
+void sh_monster_HP()
+{
+    int k = 0;
+    for (int i = 0; i < 15; i++)
+    {
+        if (monster[5][i] == 0 && k == 0)
+        {
+            money = money + monster[6][i]; //돈 추가.
+            k = 1;
+            monster[5][i] = -1;
+            gotoxy(monster[3][i], monster[4][i]);
+            printf("   ");
+            gotoxy(monster[3][i], monster[4][i] + 1);
+            printf("   ");
+            gotoxy(monster[3][i], monster[4][i] + 2);
+            printf("   ");
+        }
+        if (monster[5][i] == 100 && k == 1)
+        {
+            k = 0;
+        }
+    }
+}
+
+/*
+* 이름 : sh_monster_Rhit()
+* 기능 :
+* 받는 값 :
+* 리턴 값 :
+*/
+void sh_monster_Rhit()
+{
+    if (monster[3][a] + 2 == RIGHT_BOUND) //벽 끝에 닿을 때.
+    {
+
+    }
+    else if (monster[3][a] + 3 == RIGHT_BOUND)//벽에서 한 칸 떨어져 있을 때.
+    {
+        gotoxy(monster[3][a], monster[4][a]);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 1);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 2);
+        printf("   ");
+        monster[3][a] = monster[3][a] + 1;
+    }
+    else//벽에서 두 칸 이상 떨어져 있을 때.
+    {
+        gotoxy(monster[3][a], monster[4][a]);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 1);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 2);
+        printf("   ");
+        monster[3][a] = monster[3][a] + 2;
+    }
+
+}
+
+/*
+* 이름 :
+* 기능 :
+* 받는 값 :
+* 리턴 값 :
+*/
+void sh_monster_Lhit()
+{
+    if (monster[3][a] == LEFT_BOUND) // 벽 끝에 있을 때.
+    {
+
+    }
+    else if (monster[3][a] - 1 == LEFT_BOUND) //벽에서 한 칸 떨어져 있을 때.
+    {
+        gotoxy(monster[3][a], monster[4][a]);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 1);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 2);
+        printf("   ");
+        monster[3][a] = monster[3][a] - 1;
+    }
+    else//벽에서 두 칸 이상 떨어져 있을 때.
+    {
+        gotoxy(monster[3][a], monster[4][a]);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 1);
+        printf("   ");
+        gotoxy(monster[3][a], monster[4][a] + 2);
+        printf("   ");
+        monster[3][a] = monster[3][a] - 2;
+    }
+}
+
+/*
+* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
+//기타 함수들.
+
+
+/*
+* 이름:gotoxy() 함수.
+* 기능: 인자에 작성한 좌표로 커서를 이동시킨다.
+* 받는값: 이동할 x좌표, 이동할 y좌표.
+* 리턴값: (사용하지 않는다.)
+*/
+void gotoxy(int x, int y)
+{
+    COORD Pos = { x, y };
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
+}
+
+/*
+* 이름: hh_DamageJudge
+* 기능: 몬스터와 캐릭터의 충돌을 판단 후, 만약 충돌 했다면 캐릭터 체력 감소(hh_HPdecrease) 함수 불러옴
+* 받는값: 몬스터의 x,y좌표
+* 리턴값: x
+*/
+void hh_DamageJudge(int MX, int MY)
+{
+    //c_runstart = time(NULL);
+    if (monster[5][a] >= 0)
+    {
+        if (difftime(c_runstart, c_runstop) > JUDGETIME)
+        {
+            if ((x <= MX && MX <= (x + 4)) || (x < (MX + 3) && (MX + 3) <= (x + 4)))
+            {
+                if ((y <= MY && MY < (y + 3)) || (y < (MY + 3) && (MY + 3) <= (y + 3)))
+                    hh_HPdecrease(monster[8][a]);
+            }
+        }
+    }
+}
+
+
+
+
+/*
+* 이름: hh_RightAttackJudge
+* 기능: 캐릭터가 "오른쪽" 방향일때.. 몬스터와 캐릭터의 충돌을 판단한 후, 만약 충돌 했다면 공격데미지함수(hh_AttackDamage) 불러옴
+* 받는값: 몬스터의 x,y 좌표
+* 리턴값: X
+*/
+void hh_RightAttackJudge(int MX, int MY)
+{
+    if (monster[5][a] >= 0)
+    {
+        if (difftime(m_runstart, m_runstop) > M_JUDGETIME)
+        {
+            switch (weapon_kind)
+            {
+            case 0: //기본주사기 공격 판정
+                if (((x + 4) <= MX && MX < (x + 8)) || ((x + 4) < (MX + 3) && (MX + 3) <= (x + 8)))
+                {
+                    if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
+                    {
+                        sh_monster_Rhit();
+                        hh_AttackDamage(a);
+                    }
+                }
+                break;
+            case 1: //AZ주사기 공격 판정
+                if (((x + 4) <= MX && MX < (x + 9)) || ((x + 4) < (MX + 3) && (MX + 3) <= (x + 9)))
+                {
+                    if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
+                    {
+                        sh_monster_Rhit();
+                        hh_AttackDamage(a);
+                    }
+                }
+                break;
+            case 2: //M주사기 공격 판정
+                if (((x + 4) <= MX && MX < (x + 10)) || ((x + 4) < (MX + 3) && (MX + 3) <= (x + 10)))
+                {
+                    if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
+                    {
+                        sh_monster_Rhit();
+                        hh_AttackDamage(a);
+                    }
+                }
+                break;
+            case 3: //P주사기 공격 판정
+                if (((x + 4) <= MX && MX < (x + 11)) || ((x + 4) < (MX + 3) && (MX + 3) <= (x + 11)))
+                {
+                    if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
+                    {
+                        sh_monster_Rhit();
+                        hh_AttackDamage(a);
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
+/*
+* 이름: hh_LeftAttackJudge
+* 기능: 캐릭터가 "왼쪽" 방향일때.. 몬스터와 캐릭터의 충돌을 판단한 후, 만약 충돌 했다면 공격데미지함수(hh_AttackDamage) 불러옴
+* 받는값: 몬스터의 x,y 좌표
+* 리턴값: X
+*/
+void hh_LeftAttackJudge(int MX, int MY)
+{
+    if (monster[5][a] >= 0)
+    {
+        if (difftime(m_runstart, m_runstop) > M_JUDGETIME)
+        {
+            switch (weapon_kind)
+            {
+
+            case 0: //기본주사기 공격 판정
+                if (((x - 4) <= MX && MX < x) || ((x - 4) < (MX + 3) && (MX + 3) <= x))
+                {
+                    if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
+                    {
+                        sh_monster_Lhit();
+                        hh_AttackDamage(a);
+                    }
+                }
+                break;
+            case 1: //AZ주사기 공격 판정
+                if (((x - 5) <= MX && MX < x) || ((x - 5) < (MX + 3) && (MX + 3) <= x))
+                {
+                    if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
+                    {
+                        sh_monster_Lhit();
+                        hh_AttackDamage(a);
+                    }
+                }
+                break;
+            case 2: //M주사기 공격 판정
+                if (((x - 6) <= MX && MX < x) || ((x - 6) < (MX + 3) && (MX + 3) <= x))
+                {
+                    if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
+                    {
+                        sh_monster_Lhit();
+                        hh_AttackDamage(a);
+                    }
+                }
+                break;
+            case 3: //P주사기 공격 판정
+                if (((x - 7) <= MX && MX < x) || ((x - 7) < (MX + 3) && (MX + 3) <= x))
+                {
+                    if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
+                    {
+                        sh_monster_Lhit();
+                        hh_AttackDamage(a);
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
+/*
+* 이름: hh_HPdecrease
+* 기능: 캐릭터의 체력을 감소시키는 함수
+* 받는값: 몬스터의 종류 변수
+* 리턴값: X
+*/
+void hh_HPdecrease(int m)//monster[8][?]
+{
+    // c_runstart = time(NULL);
+    monster[9][a] = 1;
+    switch (m)
+    {
+    case 0: //기본
+        HP -= MONSTER_FIRST_DAMAGE;
+        break;
+    case 1: //알파
+        HP -= MONSTER_SECOND_DAMAGE;
+        break;
+    case 2: //베타
+        HP -= MONSTER_THIRD_DAMAGE;
+        break;
+    case 3: //감마
+        HP -= MONSTER_FOURTH_DAMAGE;
+        break;
+    case 4: //델타
+        HP -= MONSTER_FIFTH_DAMAGE;
+        break;
+    }
+    c_runstop = time(NULL);
+}
+
+/*
+* 이름: hh_AttackDamage
+* 기능: 몬스터의 체력을 감소시키는 함수
+* 받는값: 몬스터의 종류 변수
+* 리턴값: X
+*/
+void hh_AttackDamage(int m)// -->m은 한 개체의 체력 monster[5][?]
+{
+    switch (weapon_kind)
+    {
+    case 0: //기본
+        monster[5][a] -= ATTACK_N_DAMAGE;
+        break;
+    case 1: //AZ
+        monster[5][a] -= ATTACK_A_DAMAGE;
+        break;
+    case 2: //MOD
+        monster[5][a] -= ATTACK_M_DAMAGE;
+        break;
+    case 3: //PFI
+        monster[5][a] -= ATTACK_P_DAMAGE;
+        break;
+    }
+    m_runstop = time(NULL);
+}
+/*
+* 이름: hh_run함수 (개체출력함수)
+* 기능: 일단 이동방향 케이스를 나눴음
+* 받는값: x
+* 리턴값:
+*/
+void hh_run(void)
+{
+    c_runstart = time(NULL);
+    m_runstart = time(NULL);
+    if (attack_condition == 0)
+    {
+
+        if (char_side == 0)
+        {
+            for (a = 0; a < monster_time; a++) //-->몬스터 15마리수 달라질수있음 매크로사용예정
+            {
+                hh_DamageJudge(monster[3][a], monster[4][a]);
+            }
+        }
+        else if (char_side == 1)
+        {
+            for (a = 0; a < monster_time; a++) //-->몬스터 15마리수 달라질수있음 매크로사용예정
+            {
+                hh_DamageJudge(monster[3][a], monster[4][a]);
+            }
+        }
+    }
+
+    if (attack_condition == 1)
+    {
+
+        if (char_side == 0)
+        {
+            for (a = 0; a < monster_time; a++) //-->몬스터 15마리수 달라질수있음 매크로사용예정
+            {
+                hh_DamageJudge(monster[3][a], monster[4][a]);
+                hh_RightAttackJudge(monster[3][a], monster[4][a]);
+            }
+        }
+        else if (char_side == 1)
+        {
+            for (a = 0; a < monster_time; a++) //-->몬스터 15마리수 달라질수있음 매크로사용예정
+            {
+                hh_DamageJudge(monster[3][a], monster[4][a]);
+                hh_LeftAttackJudge(monster[3][a], monster[4][a]);
+            }
+        }
+    }
+}
