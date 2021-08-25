@@ -8,86 +8,93 @@
 #include<io.h>
 
 
-//ë§¤í¬ë¡œ
-#define LEFT_BOUND                  2           //ì™¼ìª½ ë§µ ê²½ê³„ê°’. ì´ ìœ„ì¹˜ê¹Œì§€ ì´ë™ ê°€ëŠ¥.
-#define RIGHT_BOUND                 77          //ì˜¤ë¥¸ìª½ ë§µ ê²½ê³„ê°’. ì´ ìœ„ì¹˜ê¹Œì§€ ì´ë™ ê°€ëŠ¥.
-#define UP_BOUND                    3           //ìœ„ìª½ ë§µ ê²½ê³„ê°’. ì´ ìœ„ì¹˜ê¹Œì§€ ì´ë™ ê°€ëŠ¥.
-#define DOWN_BOUND                  23          //ì•„ëž˜ìª½ ë§µ ê²½ê³„ê°’. ì´ ìœ„ì¹˜ê¹Œì§€ ì´ë™ ê°€ëŠ¥.
+//¸ÅÅ©·Î
+#define LEFT_BOUND                  2           //¿ÞÂÊ ¸Ê °æ°è°ª. ÀÌ À§Ä¡±îÁö ÀÌµ¿ °¡´É.
+#define RIGHT_BOUND                 77          //¿À¸¥ÂÊ ¸Ê °æ°è°ª. ÀÌ À§Ä¡±îÁö ÀÌµ¿ °¡´É.
+#define UP_BOUND                    3           //À§ÂÊ ¸Ê °æ°è°ª. ÀÌ À§Ä¡±îÁö ÀÌµ¿ °¡´É.
+#define DOWN_BOUND                  23          //¾Æ·¡ÂÊ ¸Ê °æ°è°ª. ÀÌ À§Ä¡±îÁö ÀÌµ¿ °¡´É.
 
-#define JUMP_BOUND                  10          //ì í”„ ìµœëŒ€ ë†’ì´ ê°’.
-#define JUMP_GRAVITY                1           //ì í”„ ì‹œ ì ìš©ë  ì¤‘ë ¥ ê³„ìˆ˜.
-#define JUMP_DEGREE                 1           //ì í”„ ì‹œ ë£¨í”„ ëª‡ ë²ˆë§ˆë‹¤ ìƒí•˜ ì¢Œí‘œë¥¼ ìˆ˜ì •í•  ì§€ì— ëŒ€í•œ ê°’. ì´ ê°’ì´ ì»¤ì§ˆìˆ˜ë¡ ì í”„ ì†ë„ê°€ ëŠë ¤ì§.
+#define MOVE_DEGREE                 2           //·çÇÁ ¸î ¹ø¸¶´Ù ÁÂ¿ì ÁÂÇ¥¸¦ ¼öÁ¤ÇÒ Áö¿¡ ´ëÇÑ °ª. ÀÌ °ªÀÌ Ä¿Áú¼ö·Ï ÁÂ¿ì ÀÌµ¿ ¼Ó·ÂÀÌ ´À·ÁÁü.
 
-#define ATTACK_CONDITION_TIME       1           //ê³µê²© í‚¤ ìž…ë ¥ ì‹œ ê³µê²© ìƒíƒœ ìœ ì§€ ì‹œê°„(ì´ˆ)
+#define JUMP_BOUND                  10          //Á¡ÇÁ ÃÖ´ë ³ôÀÌ °ª.
+#define JUMP_GRAVITY                1           //Á¡ÇÁ ½Ã Àû¿ëµÉ Áß·Â °è¼ö.
+#define JUMP_DEGREE                 1           //Á¡ÇÁ ½Ã ·çÇÁ ¸î ¹ø¸¶´Ù »óÇÏ ÁÂÇ¥¸¦ ¼öÁ¤ÇÒ Áö¿¡ ´ëÇÑ °ª. ÀÌ °ªÀÌ Ä¿Áú¼ö·Ï Á¡ÇÁ ¼Ó·ÂÀÌ ´À·ÁÁü.
 
-#define WEAPON_PRICE_1A             70          // ë¬´ê¸° 1ì°¨ ê°€ê²©
+#define ATTACK_CONDITION_TIME       6           //°ø°Ý Å° ÀÔ·Â ½Ã °ø°Ý »óÅÂ À¯Áö ½Ã°£(ÃÊ)
+#define ATTACK_COOLTIME             2           //°ø°Ý ÄðÅ¸ÀÓ ½Ã°£. ÃÊ´ÜÀ§.
+
+#define WEAPON_PRICE_1A             70          // ¹«±â 1Â÷ °¡°Ý
 #define WEAPON_PRICE_1M             100
 #define WEAPON_PRICE_1P             150
 
-#define WEAPON_PRICE_2A             140         //ë¬´ê¸° 2ì°¨ ê°€ê²©
+#define WEAPON_PRICE_2A             140         //¹«±â 2Â÷ °¡°Ý
 #define WEAPON_PRICE_2M             200
 #define WEAPON_PRICE_2P             300
 
-#define ATTACK_N_DAMAGE             1           //ê¸°ë³¸ ê³µê²©ë ¥
-#define ATTACK_A_DAMAGE             2           //A ê³µê²©ë ¥
-#define ATTACK_M_DAMAGE             3           //M ê³µê²©ë ¥
-#define ATTACK_P_DAMAGE             4           //P ê³µê²©ë ¥
+#define ATTACK_N_DAMAGE             1           //±âº» °ø°Ý·Â
+#define ATTACK_A_DAMAGE             2           //A °ø°Ý·Â
+#define ATTACK_M_DAMAGE             3           //M °ø°Ý·Â
+#define ATTACK_P_DAMAGE             4           //P °ø°Ý·Â
 
-#define MONSTER_JUMP_BOUND          10          //ì í”„ ìµœëŒ€ ë†’ì´ ê°’.
-#define MONSTER_JUMP_GRAVITY        1           //ì í”„ ì‹œ ì ìš©ë  ì¤‘ë ¥ ê³„ìˆ˜.
-#define MONSTER_JUMP_DELAY          4           //ëª¬ìŠ¤í„° ì í”„ ë”œë ˆì´
-#define MONSTER_JUMP_DEGREE         7           //ëª¬ìŠ¤í„° ì í”„ ì†ë„(íŠ¹ì • ìˆ«ìžì¼ ë•Œ ì œëŒ€ë¡œ ìž‘ë™ë˜ì§€ ì•ŠìŒ. 1ë²ˆì§¸ ëª¬ìŠ¤í„°ë§Œ ì›€ì§ì´ëŠ” ë²„ê·¸)
+#define MONSTER_JUMP_BOUND          10          //Á¡ÇÁ ÃÖ´ë ³ôÀÌ °ª.
+#define MONSTER_JUMP_GRAVITY        1           //Á¡ÇÁ ½Ã Àû¿ëµÉ Áß·Â °è¼ö.
+#define MONSTER_JUMP_DELAY          4           //¸ó½ºÅÍ Á¡ÇÁ µô·¹ÀÌ
+#define MONSTER_JUMP_DEGREE         7           //¸ó½ºÅÍ Á¡ÇÁ ¼Óµµ(Æ¯Á¤ ¼ýÀÚÀÏ ¶§ Á¦´ë·Î ÀÛµ¿µÇÁö ¾ÊÀ½. 1¹øÂ° ¸ó½ºÅÍ¸¸ ¿òÁ÷ÀÌ´Â ¹ö±×)
 
-#define MONSTER_GEN_DELAY           6           //ëª¬ìŠ¤í„° ì   ë”œë ˆì´
+#define MONSTER_GEN_DELAY           6           //¸ó½ºÅÍ Á¨ µô·¹ÀÌ
 
-#define MONSTER_FIRST_X_POSITION    10          //ëª¬ìŠ¤í„° 1ë²ˆ X ìœ„ì¹˜
-#define MONSTER_SECOND_X_POSITION   40          //ëª¬ìŠ¤í„° 2ë²ˆ X ìœ„ì¹˜
-#define MONSTER_THIRD_X_POSITION    70          //ëª¬ìŠ¤í„° 3ë²ˆ X ìœ„ì¹˜
+#define MONSTER_FIRST_X_POSITION    10          //¸ó½ºÅÍ 1¹ø X À§Ä¡
+#define MONSTER_SECOND_X_POSITION   40          //¸ó½ºÅÍ 2¹ø X À§Ä¡
+#define MONSTER_THIRD_X_POSITION    70          //¸ó½ºÅÍ 3¹ø X À§Ä¡
 
-#define MONSTER_Y_POSITION          10          //ëª¬ìŠ¤í„° Y ìœ„ì¹˜
+#define MONSTER_Y_POSITION          10          //¸ó½ºÅÍ Y À§Ä¡
 
-#define MONSTER_FIRST_HP            4           //ëª¬ìŠ¤í„° 1ë‹¨ê³„ ì²´ë ¥
-#define MONSTER_SECOND_HP           6           //ëª¬ìŠ¤í„° 2ë‹¨ê³„ ì²´ë ¥
-#define MONSTER_THIRD_HP            9           //ëª¬ìŠ¤í„° 3ë‹¨ê³„ ì²´ë ¥
-#define MONSTER_FOURTH_HP           13          //ëª¬ìŠ¤í„° 4ë‹¨ê³„ ì²´ë ¥
-#define MONSTER_FIFTH_HP            18          //ëª¬ìŠ¤í„° 5ë‹¨ê³„ ì²´ë ¥
+#define MONSTER_FIRST_HP            4           //¸ó½ºÅÍ 1´Ü°è Ã¼·Â
+#define MONSTER_SECOND_HP           6           //¸ó½ºÅÍ 2´Ü°è Ã¼·Â
+#define MONSTER_THIRD_HP            9           //¸ó½ºÅÍ 3´Ü°è Ã¼·Â
+#define MONSTER_FOURTH_HP           13          //¸ó½ºÅÍ 4´Ü°è Ã¼·Â
+#define MONSTER_FIFTH_HP            18          //¸ó½ºÅÍ 5´Ü°è Ã¼·Â
 
-#define MONSTER_FIRST_MONEY         3           //ëª¬ìŠ¤í„° 1ë‹¨ê³„ ëˆ
-#define MONSTER_SECOND_MONEY        4           //ëª¬ìŠ¤í„° 2ë‹¨ê³„ ëˆ
-#define MONSTER_THIRD_MONEY         5           //ëª¬ìŠ¤í„° 3ë‹¨ê³„ ëˆ
-#define MONSTER_FOURTH_MONEY        6           //ëª¬ìŠ¤í„° 4ë‹¨ê³„ ëˆ
-#define MONSTER_FIFTH_MONEY         7           //ëª¬ìŠ¤í„° 5ë‹¨ê³„ ëˆ
+#define MONSTER_FIRST_MONEY         3           //¸ó½ºÅÍ 1´Ü°è µ·
+#define MONSTER_SECOND_MONEY        4           //¸ó½ºÅÍ 2´Ü°è µ·
+#define MONSTER_THIRD_MONEY         5           //¸ó½ºÅÍ 3´Ü°è µ·
+#define MONSTER_FOURTH_MONEY        6           //¸ó½ºÅÍ 4´Ü°è µ·
+#define MONSTER_FIFTH_MONEY         7           //¸ó½ºÅÍ 5´Ü°è µ·
 
-#define MONSTER_FIRST_DAMAGE        9           //ëª¬ìŠ¤í„° 1ë‹¨ê³„ ëŒ€ë¯¸ì§€
-#define MONSTER_SECOND_DAMAGE       12          //ëª¬ìŠ¤í„° 2ë‹¨ê³„ ëŒ€ë¯¸ì§€
-#define MONSTER_THIRD_DAMAGE        15          //ëª¬ìŠ¤í„° 3ë‹¨ê³„ ëŒ€ë¯¸ì§€
-#define MONSTER_FOURTH_DAMAGE       18          //ëª¬ìŠ¤í„° 4ë‹¨ê³„ ëŒ€ë¯¸ì§€
-#define MONSTER_FIFTH_DAMAGE        21          //ëª¬ìŠ¤í„° 5ë‹¨ê³„ ëŒ€ë¯¸ì§€
+#define MONSTER_FIRST_DAMAGE        9           //¸ó½ºÅÍ 1´Ü°è ´ë¹ÌÁö
+#define MONSTER_SECOND_DAMAGE       12          //¸ó½ºÅÍ 2´Ü°è ´ë¹ÌÁö
+#define MONSTER_THIRD_DAMAGE        15          //¸ó½ºÅÍ 3´Ü°è ´ë¹ÌÁö
+#define MONSTER_FOURTH_DAMAGE       18          //¸ó½ºÅÍ 4´Ü°è ´ë¹ÌÁö
+#define MONSTER_FIFTH_DAMAGE        21          //¸ó½ºÅÍ 5´Ü°è ´ë¹ÌÁö
 
-#define MONSTER_FIRST_RANK          0           //ëª¬ìŠ¤í„° ë³€ì´ ë‹¨ê³„
+#define MONSTER_FIRST_RANK          0           //¸ó½ºÅÍ º¯ÀÌ ´Ü°è
 #define MONSTER_SECOND_RANK         1           
 #define MONSTER_THIRD_RANK          2           
 #define MONSTER_FOURTH_RANK         3           
 #define MONSTER_FIFTH_RANK          4           
 
-//í•¨ìˆ˜ ì›í˜• ì„ ì–¸
-void gotoxy(int x, int y); //gotoxy í•¨ìˆ˜.
-void ljh_CharTreat(); //ìºë¦­í„°ì²˜ë¦¬í•¨ìˆ˜.
-void ljh_GameProcess(void); //ê²Œìž„ì§„í–‰í•¨ìˆ˜.
-void ljh_game_reset(void); //ê²Œìž„ ë¦¬ì…‹ í•¨ìˆ˜.
+#define JUDGETIME                   1           //--->Ä³¸¯ÅÍ Ã¼·Â±ðÀÏ¶§ ¹«ÀûÀÎ ½Ã°£ 1ÃÊ
+#define M_JUDGETIME                 0.0005      //--->¸ó½ºÅÍ Ã¼·Â±ðÀÏ¶§ ¹«ÀûÀÎ ½Ã°£ 1ÃÊ
+
+
+//ÇÔ¼ö ¿øÇü ¼±¾ð
+void gotoxy(int x, int y); //gotoxy ÇÔ¼ö.
+void ljh_CharTreat(); //Ä³¸¯ÅÍÃ³¸®ÇÔ¼ö.
+void ljh_GameProcess(void); //°ÔÀÓÁøÇàÇÔ¼ö.
+void ljh_game_reset(void); //°ÔÀÓ ¸®¼Â ÇÔ¼ö.
 void ljh_cursor(void);
 
-void hh_consolebar(); //ê²Œìž„í™”ë©´ì¶œë ¥í•¨ìˆ˜.
+void hh_consolebar(); //°ÔÀÓÈ­¸éÃâ·ÂÇÔ¼ö.
 
-void sh_HP(); //HPìƒíƒœì— ë”°ë¼ HPë¦¬ì   ë° ê²Œìž„ íŒ¨ë°°ë¥¼ ê´€ë¦¬í•˜ëŠ” í•¨ìˆ˜.
-void sh_Victory(); //ê²Œìž„ì„±ê³µí•¨ìˆ˜.
-void sh_Restart(); //ê²Œìž„ì‹¤íŒ¨í•¨ìˆ˜.
-void sh_monster(); //ëª¬ìŠ¤í„°ì²˜ë¦¬í•¨ìˆ˜.
-void sh_monster_change(); //ëª¬ìŠ¤í„°ë³€í™”í•¨ìˆ˜.
-void sh_monster_move(); //ëª¬ìŠ¤í„°ì›€ì§ìž„ì²˜ë¦¬í•¨ìˆ˜.
-void sh_monster_print(); //ëª¬ìŠ¤í„°ì¶œë ¥í•¨ìˆ˜.
-void sh_monster_create(); //ëª¬ìŠ¤í„°ìƒì„±í•¨ìˆ˜.
-void sh_monster_HP(); //ëª¬ìŠ¤í„°ì²´ë ¥í•¨ìˆ˜.
+void sh_HP(); //HP»óÅÂ¿¡ µû¶ó HP¸®Á¨ ¹× °ÔÀÓ ÆÐ¹è¸¦ °ü¸®ÇÏ´Â ÇÔ¼ö.
+void sh_Victory(); //°ÔÀÓ¼º°øÇÔ¼ö.
+void sh_Restart(); //°ÔÀÓ½ÇÆÐÇÔ¼ö.
+void sh_monster(); //¸ó½ºÅÍÃ³¸®ÇÔ¼ö.
+void sh_monster_change(); //¸ó½ºÅÍº¯È­ÇÔ¼ö.
+void sh_monster_move(); //¸ó½ºÅÍ¿òÁ÷ÀÓÃ³¸®ÇÔ¼ö.
+void sh_monster_print(); //¸ó½ºÅÍÃâ·ÂÇÔ¼ö.
+void sh_monster_create(); //¸ó½ºÅÍ»ý¼ºÇÔ¼ö.
+void sh_monster_HP(); //¸ó½ºÅÍÃ¼·ÂÇÔ¼ö.
 
 void insuk_start(char name[3]);
 char insuk_option(void);
@@ -103,62 +110,72 @@ void hh_LeftAttackJudge(int, int);
 void hh_HPdecrease(int);
 void hh_AttackDamage(int);
 
-//ì „ì—­ë³€ìˆ˜
+
+//Àü¿ªº¯¼ö
 char name[3];
 
-int score; //ëž­í¬ ë°˜ì˜ ì‹œ ì‚¬ìš©í•¨.
+int score; //·©Å© ¹Ý¿µ ½Ã »ç¿ëÇÔ.
 
-int jump; //ì í”„ ìƒíƒœ ê´€ë ¨ ì „ì—­ë³€ìˆ˜. ì í”„ ì¤‘ì´ë©´ 1, ì í”„ ì¤‘ì´ ì•„ë‹ˆë©´ 0ì„ ì €ìž¥í•¨.
-int jump_across; //ì í”„ ì‹œ ìµœëŒ€ ë†’ì´ê¹Œì§€ ë„ë‹¬í–ˆëŠ”ì§€ë¥¼ ì €ìž¥í•¨. ì í”„í•˜ì§€ ì•Šì•˜ê±°ë‚˜ ìµœëŒ€ ë†’ì´ ì´ì „ì´ë©´ 0ì„, ìµœëŒ€ ë†’ì´ ì´í›„ì´ë©´ 0ë³´ë‹¤ í° ìˆ˜ë¥¼ ì €ìž¥í•¨.
-int jump_control = JUMP_DEGREE; //ì í”„ í‚¤ ìž…ë ¥ ì‹œ ë£¨í”„ ëª‡ ë°”í€´ë§ˆë‹¤ ìƒí•˜ ì¢Œí‘œë¥¼ ìˆ˜ì •í•  ì§€ì— ëŒ€í•œ ì •ë³´ë¥¼ ì €ìž¥í•¨.
+int move_control_right = MOVE_DEGREE; //Ä³¸¯ÅÍÀÇ ¿ÞÂÊ ¿òÁ÷ÀÓ ½Ã ·çÇÁ ¸î ¹ÙÄû¸¶´Ù ÁÂÇ¥¸¦ ¼öÁ¤ÇÒ Áö¿¡ ´ëÇÑ Á¤º¸¸¦ ÀúÀåÇÔ.
+int move_control_left = MOVE_DEGREE; //Ä³¸¯ÅÍÀÇ ¿À¸¥ÂÊ ¿òÁ÷ÀÓ ½Ã ·çÇÁ ¸î ¹ÙÄû¸¶´Ù ÁÂÇ¥¸¦ ¼öÁ¤ÇÒ Áö¿¡ ´ëÇÑ Á¤º¸¸¦ ÀúÀåÇÔ.
 
-int char_side; //ìºë¦­í„°ì˜ í˜„ìž¬ ì´ë™ ë°©í–¥ì„ ì €ìž¥í•¨. ì˜¤ë¥¸ìª½ì„ í–¥í•˜ê³  ìžˆìœ¼ë©´ 0ì„, ì™¼ìª½ì„ í–¥í•˜ê³  ìžˆìœ¼ë©´ 1ì„ ì €ìž¥í•¨. 
+int jump; //Á¡ÇÁ »óÅÂ °ü·Ã Àü¿ªº¯¼ö. Á¡ÇÁ ÁßÀÌ¸é 1, Á¡ÇÁ ÁßÀÌ ¾Æ´Ï¸é 0À» ÀúÀåÇÔ.
+int jump_across; //Á¡ÇÁ ½Ã ÃÖ´ë ³ôÀÌ±îÁö µµ´ÞÇß´ÂÁö¸¦ ÀúÀåÇÔ. Á¡ÇÁÇÏÁö ¾Ê¾Ò°Å³ª ÃÖ´ë ³ôÀÌ ÀÌÀüÀÌ¸é 0À», ÃÖ´ë ³ôÀÌ ÀÌÈÄÀÌ¸é 0º¸´Ù Å« ¼ö¸¦ ÀúÀåÇÔ.
+int jump_control = JUMP_DEGREE; //Ä³¸¯ÅÍÀÇ Á¡ÇÁ Å° ÀÔ·Â ½Ã ·çÇÁ ¸î ¹ÙÄû¸¶´Ù »óÇÏ ÁÂÇ¥¸¦ ¼öÁ¤ÇÒ Áö¿¡ ´ëÇÑ Á¤º¸¸¦ ÀúÀåÇÔ.
 
-int HP = 100; //ì²´ë ¥
-int HP_condition = 0;//ì²´ë ¥ ë¦¬ì   ìƒíƒœ(0ì¼ê²½ìš° ë¦¬ì  x, 1ì¼ê²½ìš° ë¦¬ì  o
-time_t HP_start, HP_end = 0; //ì²´ë ¥ ê´€ë ¨ ì‹œê°„ ì´ˆê¸°í™”
-int money = 0; //ì†Œìœ í•œ ëˆ, ì²˜ìŒì—” 0ì›
-int weapon_damage = ATTACK_N_DAMAGE;//ë¬´ê¸°ì˜ ê³µê²©ë ¥(ê¸°ë³¸, A, M, Pë¥¼ ìˆœì„œëŒ€ë¡œ 1,2,3,4ë¡œ ì„¤ì •)
-int weapon_kind; //ë¬´ê¸°ì˜ ì¢…ë¥˜(ê¸°ë³¸, A, M, Pë¥¼ ìˆœì„œëŒ€ë¡œ 0,1,2,3ìœ¼ë¡œ êµ¬ë¶„)
-int weapon_rank = 0; //ë¬´ê¸°ì˜ ì—…ê·¸ë ˆì´ë“œ ë‹¨ê³„(ê¸°ë³¸, 1ë‹¨ê³„, 2ë‹¨ê³„ë¥¼ ìˆœì„œëŒ€ë¡œ 0,1,2ë¡œ êµ¬ë¶„)
+int char_side; //Ä³¸¯ÅÍÀÇ ÇöÀç ÀÌµ¿ ¹æÇâÀ» ÀúÀåÇÔ. ¿À¸¥ÂÊÀ» ÇâÇÏ°í ÀÖÀ¸¸é 0À», ¿ÞÂÊÀ» ÇâÇÏ°í ÀÖÀ¸¸é 1À» ÀúÀåÇÔ. 
 
-int x = 5; //ìºë¦­í„° ì¢Œí‘œë¥¼ ì €ìž¥í•  ì „ì—­ë³€ìˆ˜.
+int HP = 100; //Ã¼·Â
+int HP_condition = 0;//Ã¼·Â ¸®Á¨ »óÅÂ(0ÀÏ°æ¿ì ¸®Á¨x, 1ÀÏ°æ¿ì ¸®Á¨o
+time_t HP_start, HP_end = 0; //Ã¼·Â °ü·Ã ½Ã°£ ÃÊ±âÈ­
+int money = 0; //¼ÒÀ¯ÇÑ µ·, Ã³À½¿£ 0¿ø
+int weapon_damage = ATTACK_N_DAMAGE;//¹«±âÀÇ °ø°Ý·Â(±âº», A, M, P¸¦ ¼ø¼­´ë·Î 1,2,3,4·Î ¼³Á¤)
+int weapon_kind; //¹«±âÀÇ Á¾·ù(±âº», A, M, P¸¦ ¼ø¼­´ë·Î 0,1,2,3À¸·Î ±¸ºÐ)
+int weapon_rank = 0; //¹«±âÀÇ ¾÷±×·¹ÀÌµå ´Ü°è(±âº», 1´Ü°è, 2´Ü°è¸¦ ¼ø¼­´ë·Î 0,1,2·Î ±¸ºÐ)
+
+int x = 5; //Ä³¸¯ÅÍ ÁÂÇ¥¸¦ ÀúÀåÇÒ Àü¿ªº¯¼ö.
 int y = DOWN_BOUND - 2;
 
-int attack_condition; //í˜„ìž¬ ê³µê²© ìƒíƒœë¥¼ ì €ìž¥í•  ì „ì—­ë³€ìˆ˜. ê³µê²© ìƒíƒœê°€ 0ì´ë©´ ê³µê²© ê´€ë ¨ ì¡°ê±´ë¬¸ë“¤ ì²˜ë¦¬í•˜ì§€ ì•Šê³ , ê³µê²© ìƒíƒœê°€ 1ì´ë©´ í˜„ìž¬ ë¬´ê¸° ìƒíƒœì— ë§žì¶°ì„œ ë¬´ê¸° ì¶œë ¥.
-long long space_start_time; //ê³µê²© í‚¤ë¥¼ ìž…ë ¥í•œ ìˆœê°„ì„ ì €ìž¥í•  ì „ì—­ë³€ìˆ˜. ì§€ì—­ë³€ìˆ˜ë¡œ ì‚¬ìš©í•˜ë ¤ í–ˆìœ¼ë‚˜, ì´ˆê¸°í™” ì˜¤ë¥˜ ì œê±°ë¥¼ ìœ„í•´ ì „ì—­ë³€ìˆ˜ë¡œ ë°”ê¿ˆ.
+int attack_condition; //ÇöÀç °ø°Ý »óÅÂ¸¦ ÀúÀåÇÒ Àü¿ªº¯¼ö. °ø°Ý »óÅÂ°¡ 0ÀÌ¸é °ø°Ý °ü·Ã Á¶°Ç¹®µé Ã³¸®ÇÏÁö ¾Ê°í, °ø°Ý »óÅÂ°¡ 1ÀÌ¸é ÇöÀç ¹«±â »óÅÂ¿¡ ¸ÂÃç¼­ ¹«±â Ãâ·Â.
+long long space_start_time; //°ø°Ý Å°¸¦ ÀÔ·ÂÇÑ ¼ø°£À» ÀúÀåÇÒ Àü¿ªº¯¼ö.
+long long space_cooltime_start_time; //°ø°Ý »óÅÂ Á¾·á ½ÃÁ¡. ÃÊ´ÜÀ§.
+long long space_cooltime_last_time; //°ø°Ý »óÅÂ Á¾·á ÀÌÈÄ ½ÃÁ¡. ÃÊ´ÜÀ§.
+int space_cooltime = 0; //ÄðÅ¸ÀÓ »óÅÂÀÎÁö¸¦ ÀúÀåÇÔ. 0ÀÌ¸é ÄðÅ¸ÀÓ ÁßÀÌ ¾Æ´Ñ °Í, 1ÀÌ¸é ÄðÅ¸ÀÓ ÁßÀÎ °Í.
 
-time_t game_start_time; //ê²Œìž„ ì‹œìž‘ ì‹œê°„ì„ ì €ìž¥í•¨.
-time_t game_play_time = 0; //ê²Œìž„ ì¢…ë£Œ ì‹œê°„ì„ ì €ìž¥í•¨.
+time_t game_start_time; //°ÔÀÓ ½ÃÀÛ ½Ã°£À» ÀúÀåÇÔ.
+time_t game_play_time = 0; //°ÔÀÓ Á¾·á ½Ã°£À» ÀúÀåÇÔ.
 
 int monster[11][15];
 int monster_jump_control = MONSTER_JUMP_DEGREE;
 int monster_time = 0;
 
+int a;
+long long c_runstart, m_runstart, c_runstop, m_runstop;
+
 
 /*
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 */
-//main í•¨ìˆ˜
+//main ÇÔ¼ö
 
 
 /*
-* ì´ë¦„: main í•¨ìˆ˜.
-* ê¸°ëŠ¥: main í•¨ìˆ˜.
-* ë°›ëŠ”ê°’: X
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: main ÇÔ¼ö.
+* ±â´É: main ÇÔ¼ö.
+* ¹Þ´Â°ª: X
+* ¸®ÅÏ°ª: X
 */
 int main(void)
 {
-    //í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•œ ìž„ì‹œ ê°’. (tmp)
+    //Å×½ºÆ®¸¦ À§ÇÑ ÀÓ½Ã °ª. (tmp)
     money = 1000;
     HP = 80;
 
-    //ì‹œìž‘ì˜µì…˜í•¨ìˆ˜.
+    //½ÃÀÛ¿É¼ÇÇÔ¼ö.
     insuk_startoption();
 
-    //ê²Œìž„ì§„í–‰í•¨ìˆ˜.
+    //°ÔÀÓÁøÇàÇÔ¼ö.
     ljh_GameProcess();
 
     return 0;
@@ -169,17 +186,17 @@ int main(void)
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 */
-//ì‹œìž‘ì˜µì…˜í•¨ìˆ˜.
+//½ÃÀÛ¿É¼ÇÇÔ¼ö.
 
 
 /*
-* ì´ë¦„ : ì‹œìž‘ì˜µì…˜í•¨ìˆ˜
-* ê¸°ëŠ¥ : ì‹œìž‘ ì˜µì…˜ ê´€ë ¨ ì²˜ë¦¬.
-* ìž…ë ¥ê°’ : X
-* ì´ë¦„ : ì‹œìž‘ì˜µì…˜í•¨ìˆ˜
-* ê¸°ëŠ¥ : ì‹œìž‘ ì˜µì…˜ ê´€ë ¨ ì²˜ë¦¬.
-* ìž…ë ¥ê°’ : X
-* ì¶œë ¥ê°’ : X
+* ÀÌ¸§ : ½ÃÀÛ¿É¼ÇÇÔ¼ö
+* ±â´É : ½ÃÀÛ ¿É¼Ç °ü·Ã Ã³¸®.
+* ÀÔ·Â°ª : X
+* ÀÌ¸§ : ½ÃÀÛ¿É¼ÇÇÔ¼ö
+* ±â´É : ½ÃÀÛ ¿É¼Ç °ü·Ã Ã³¸®.
+* ÀÔ·Â°ª : X
+* Ãâ·Â°ª : X
 */
 void insuk_startoption(void)
 {
@@ -225,10 +242,10 @@ void insuk_startoption(void)
 
 
 /*
-* ì´ë¦„ : insuk_startí•¨ìˆ˜
-* ê¸°ëŠ¥ : ê²Œìž„ì‹œìž‘ -> ì´ë¦„ ë°›ê¸° -> system("cls")
-* ìž…ë ¥ê°’ : ì´ë¦„
-* ì¶œë ¥ê°’ : x
+* ÀÌ¸§ : insuk_startÇÔ¼ö
+* ±â´É : °ÔÀÓ½ÃÀÛ -> ÀÌ¸§ ¹Þ±â -> system("cls")
+* ÀÔ·Â°ª : ÀÌ¸§
+* Ãâ·Â°ª : x
 */
 void insuk_start(char name[3])
 {
@@ -238,26 +255,26 @@ void insuk_start(char name[3])
     {
         nm = 0;
 
-        gotoxy(0, 0);//ìƒ 
+        gotoxy(0, 0);//»ó 
         for (int i = 0; i < 40; i++)
         {
-            printf("â–¡");
+            printf("¡à");
         }
-        gotoxy(0, 24);//í•˜
+        gotoxy(0, 24);//ÇÏ
         for (int i = 0; i < 40; i++)
         {
-            printf("â–¡");
+            printf("¡à");
         }
 
-        for (int i = 1; i < 24; i++)//ì¢Œ  
+        for (int i = 1; i < 24; i++)//ÁÂ  
         {
             gotoxy(0, i);
-            printf("â–¡");
+            printf("¡à");
         }
-        for (int i = 1; i < 24; i++)//ìš° 
+        for (int i = 1; i < 24; i++)//¿ì 
         {
             gotoxy(78, i);
-            printf("â–¡");
+            printf("¡à");
         }
 
         gotoxy(22, 7);
@@ -321,7 +338,7 @@ void insuk_start(char name[3])
         if (nm != 0)
         {
             gotoxy(25, 16);
-            printf("ìž˜ëª»ëœ ìž…ë ¥ìž…ë‹ˆë‹¤. ë‹¤ì‹œ ìž…ë ¥í•˜ì„¸ìš”.");
+            printf("Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇÏ¼¼¿ä.");
             back = _getch();
         }
         system("cls");
@@ -331,10 +348,10 @@ void insuk_start(char name[3])
 
 
 /*
-* ì´ë¦„ : insuk_option
-* ê¸°ëŠ¥ : ì˜µì…˜ ìž…ë ¥ ë°›ê¸°
-* ìž…ë ¥ê°’ : x
-* ì¶œë ¥ê°’ : op(ìž…ë ¥ë°›ì€ ì˜µì…˜)
+* ÀÌ¸§ : insuk_option
+* ±â´É : ¿É¼Ç ÀÔ·Â ¹Þ±â
+* ÀÔ·Â°ª : x
+* Ãâ·Â°ª : op(ÀÔ·Â¹ÞÀº ¿É¼Ç)
 */
 char insuk_option(void)
 {
@@ -351,26 +368,26 @@ char insuk_option(void)
         gotoxy(22, 10);
         printf("#  #  ##    #   #### ###    ###   #");
 
-        gotoxy(0, 0);//ìƒ 
+        gotoxy(0, 0);//»ó 
         for (int i = 0; i < 40; i++)
         {
-            printf("â–¡");
+            printf("¡à");
         }
-        gotoxy(0, 24);//í•˜
+        gotoxy(0, 24);//ÇÏ
         for (int i = 0; i < 40; i++)
         {
-            printf("â–¡");
+            printf("¡à");
         }
 
-        for (int i = 1; i < 24; i++)//ì¢Œ  
+        for (int i = 1; i < 24; i++)//ÁÂ  
         {
             gotoxy(0, i);
-            printf("â–¡");
+            printf("¡à");
         }
-        for (int i = 1; i < 24; i++)//ìš° 
+        for (int i = 1; i < 24; i++)//¿ì 
         {
             gotoxy(78, i);
-            printf("â–¡");
+            printf("¡à");
         }
 
         gotoxy(25, 15);
@@ -390,7 +407,7 @@ char insuk_option(void)
         if (count == 0)
         {
             gotoxy(25, 21);
-            printf("ìž˜ëª»ëœ ìž…ë ¥ìž…ë‹ˆë‹¤. ë‹¤ì‹œ ìž…ë ¥í•˜ì„¸ìš”.");
+            printf("Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇÏ¼¼¿ä.");
             back = _getch();
         }
         system("cls");
@@ -400,32 +417,83 @@ char insuk_option(void)
 
 
 /*
-* ì´ë¦„ : insuk_help
-* ê¸°ëŠ¥ : system("cls") -> ë„ì›€ë§ ì¶œë ¥ -> system("cls")
-* ìž…ë ¥ê°’ : x
-* ì¶œë ¥ê°’ : x
+* ÀÌ¸§ : insuk_help
+* ±â´É : system("cls") -> µµ¿ò¸» Ãâ·Â -> system("cls")
+* ÀÔ·Â°ª : x
+* Ãâ·Â°ª : x
 */
 void insuk_help(void)
 {
-    char exit;
     system("cls");
-    printf("ì í”„ = ìœ„ë°©í–¥í‚¤(ìœ„í™”ì‚´í‘œ)\n");
-    printf("ì™¼ìª½ì´ë™ = ì™¼ìª½ë°©í–¥í‚¤(ì™¼ìª½í™”ì‚´í‘œ)\n");
-    printf("ì˜¤ë¥¸ìª½ì´ë™ = ì˜¤ë¥¸ìª½ë°©í–¥í‚¤(ì˜¤ë¥¸ìª½í™”ì‚´í‘œ)\n");
-    printf("ê³µê²© = spacebar\n");
-    printf("ê²Œìž„ì¢…ë£Œ = t\n");
-    printf("ë©”ì¸ë©”ë‰´ë¡œ ëŒì•„ê°€ë ¤ë©´ ì•„ë¬´í‚¤ë‚˜ ëˆ„ë¥´ì„¸ìš”.");
-    exit = _getch();
+
+    gotoxy(0, 0);//»ó 
+    for (int i = 0; i < 40; i++)
+    {
+        printf("¡à");
+    }
+    gotoxy(0, 24);//ÇÏ
+    for (int i = 0; i < 40; i++)
+    {
+        printf("¡à");
+    }
+
+    for (int i = 1; i < 24; i++)//ÁÂ  
+    {
+        gotoxy(0, i);
+        printf("¡à");
+    }
+    for (int i = 1; i < 24; i++)//¿ì 
+    {
+        gotoxy(78, i);
+        printf("¡à");
+    }
+    gotoxy(22, 4);
+    printf("#  #  ##  #   # #### ###     # ####");
+    gotoxy(22, 5);
+    printf("## # #  #  # #   ##  #  #   ## #  #");
+    gotoxy(22, 6);
+    printf("# ## #  #  # #   ##  #  #    # ####");
+    gotoxy(22, 7);
+    printf("#  #  ##    #   #### ###    ###   #");
+    gotoxy(21, 12);
+    printf("Á¡ÇÁ = À§¹æÇâÅ°(À§È­»ìÇ¥)\n");
+    gotoxy(21, 13);
+    printf("¿ÞÂÊÀÌµ¿ = ¿ÞÂÊ¹æÇâÅ°(¿ÞÂÊÈ­»ìÇ¥)\n");
+    gotoxy(21, 14);
+    printf("¿À¸¥ÂÊÀÌµ¿ = ¿À¸¥ÂÊ¹æÇâÅ°(¿À¸¥ÂÊÈ­»ìÇ¥)\n");
+    gotoxy(21, 15);
+    printf("°ø°Ý = spacebar\n");
+    gotoxy(21, 16);
+    printf("°ÔÀÓÁ¾·á = t\n");
+    gotoxy(21, 17);
+    printf("AZ±¸¸Å = j");
+    gotoxy(21, 18);
+    printf("Moderna±¸¸Å = k");
+    gotoxy(21, 19);
+    printf("Pfizer±¸¸Å = l");
+    gotoxy(21, 21);
+
+    printf("ÀÌÀüÀ¸·Î µ¹¾Æ°¡·Á¸é q¸¦ ´©¸£¼¼¿ä.");
+
+    char trash = 0;
+    while (1)
+    {
+        trash = getch();
+        if (trash == 'q')
+        {
+            break;
+        }
+    }
     system("cls");
     return;
 }
 
 
 /*
-* ì´ë¦„ : insuk_saverank
-* ê¸°ëŠ¥ : ê²Œìž„ ì™„ë£Œ í›„ ëž­í‚¹ì„ ë°˜ì˜í•¨.
-* ìž…ë ¥ê°’ : x
-* ì¶œë ¥ê°’ : x
+* ÀÌ¸§ : insuk_saverank
+* ±â´É : °ÔÀÓ ¿Ï·á ÈÄ ·©Å·À» ¹Ý¿µÇÔ.
+* ÀÔ·Â°ª : x
+* Ãâ·Â°ª : x
 */
 void insuk_saverank(void)
 {
@@ -604,15 +672,46 @@ void insuk_saverank(void)
 
 
 /*
-* ì´ë¦„ : insuk_rankload
-* ê¸°ëŠ¥ : ëž­í¬ íŒŒì¼ì„ ì½ì–´ì„œ ì¶œë ¥í•¨.
-* ìž…ë ¥ê°’ : x
-* ì¶œë ¥ê°’ : x
+* ÀÌ¸§ : insuk_rankload
+* ±â´É : ·©Å© ÆÄÀÏÀ» ÀÐ¾î¼­ Ãâ·ÂÇÔ.
+* ÀÔ·Â°ª : x
+* Ãâ·Â°ª : x
 */
 void insuk_rankload(void)
 {
     char quit;
     system("cls");
+
+
+    gotoxy(0, 0);//»ó 
+    for (int i = 0; i < 40; i++)
+    {
+        printf("¡à");
+    }
+    gotoxy(0, 24);//ÇÏ
+    for (int i = 0; i < 40; i++)
+    {
+        printf("¡à");
+    }
+
+    for (int i = 1; i < 24; i++)//ÁÂ  
+    {
+        gotoxy(0, i);
+        printf("¡à");
+    }
+    for (int i = 1; i < 24; i++)//¿ì 
+    {
+        gotoxy(78, i);
+        printf("¡à");
+    }
+    gotoxy(22, 3);
+    printf("#  #  ##  #   # #### ###     # ####");
+    gotoxy(22, 4);
+    printf("## # #  #  # #   ##  #  #   ## #  #");
+    gotoxy(22, 5);
+    printf("# ## #  #  # #   ##  #  #    # ####");
+    gotoxy(22, 6);
+    printf("#  #  ##    #   #### ###    ###   #");
 
     char rankname[4][3];
     int rank[4], count = 0;
@@ -622,9 +721,12 @@ void insuk_rankload(void)
     {
         count++;
     }
-    printf("*********AZ**********\n");
+
+    gotoxy(22, 9);
+    printf("*****************AZ****************\n");
     for (int i = 0; i < count; i++)
     {
+        gotoxy(31, i + 10);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
@@ -635,9 +737,12 @@ void insuk_rankload(void)
     {
         count++;
     }
-    printf("*******Moderna*******\n");
+
+    gotoxy(22, 13);
+    printf("***************Moderna*************\n");
     for (int i = 0; i < count; i++)
     {
+        gotoxy(31, i + 14);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
@@ -648,14 +753,17 @@ void insuk_rankload(void)
     {
         count++;
     }
-    printf("*******Pfizer********\n");
+
+    gotoxy(22, 17);
+    printf("****************Pfizer*************\n");
     for (int i = 0; i < count; i++)
     {
+        gotoxy(31, i + 18);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
-
-    printf("\nqë¥¼ ëˆ„ë¥´ë©´ ì¢…ë£Œ í™”ë©´ìœ¼ë¡œ ë„˜ì–´ê°‘ë‹ˆë‹¤.");
+    gotoxy(22, 21);
+    printf("q¸¦ ´©¸£¸é Á¾·á È­¸éÀ¸·Î ³Ñ¾î°©´Ï´Ù.");
 
     while (1)
     {
@@ -675,33 +783,33 @@ void insuk_rankload(void)
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 */
-//ê²Œìž„ì§„í–‰í•¨ìˆ˜ ê´€ë ¨
+//°ÔÀÓÁøÇàÇÔ¼ö °ü·Ã
 
 
 /*
-* ì´ë¦„: ê²Œìž„ì§„í–‰í•¨ìˆ˜.
-* ê¸°ëŠ¥: ê²Œìž„ì„ ì§„í–‰í•œë‹¤.
-* ë°›ëŠ”ê°’: X
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: °ÔÀÓÁøÇàÇÔ¼ö.
+* ±â´É: °ÔÀÓÀ» ÁøÇàÇÑ´Ù.
+* ¹Þ´Â°ª: X
+* ¸®ÅÏ°ª: X
 */
 void ljh_GameProcess(void)
 {
-    ljh_cursor();//ì»¤ì„œ ì œê±°
+    ljh_cursor();//Ä¿¼­ Á¦°Å
 
-    game_start_time = time(NULL); //ê²Œìž„ ì‹œìž‘ì‹œê°„ ì €ìž¥
+    game_start_time = time(NULL); //°ÔÀÓ ½ÃÀÛ½Ã°£ ÀúÀå
 
-    ljh_game_reset();//ì´ˆê¸°í™” í•¨ìˆ˜.
+    ljh_game_reset();//ÃÊ±âÈ­ ÇÔ¼ö.
 
     while (1)
     {
-        hh_consolebar(); //ê²Œìž„í™”ë©´ì¶œë ¥í•¨ìˆ˜.
+        hh_consolebar(); //°ÔÀÓÈ­¸éÃâ·ÂÇÔ¼ö.
 
-        ljh_CharTreat(); //ìºë¦­í„°ì²˜ë¦¬í•¨ìˆ˜.
+        ljh_CharTreat(); //Ä³¸¯ÅÍÃ³¸®ÇÔ¼ö.
         sh_monster();
 
-        hh_run();////////////////////////////////////////////////////->>0824 21ì‹œì— ê¹€í™˜í¬ê°€ í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•´ ë„£ì–´ë´„
+        hh_run();////////////////////////////////////////////////////->>0824 21½Ã¿¡ ±èÈ¯Èñ°¡ Å×½ºÆ®¸¦ À§ÇØ ³Ö¾îº½
 
-        Sleep((DWORD)0.6); //ê²Œìž„ ì†ë„ ì¡°ì ˆì„ ìœ„í•œ Sleep() í•¨ìˆ˜.
+        Sleep((DWORD)0.6); //°ÔÀÓ ¼Óµµ Á¶ÀýÀ» À§ÇÑ Sleep() ÇÔ¼ö.
     }
 
     return;
@@ -709,10 +817,10 @@ void ljh_GameProcess(void)
 
 
 /*
-* ì´ë¦„: ì»¤ì„œì œê±°í•¨ìˆ˜.
-* ê¸°ëŠ¥: ì½˜ì†”ì—ì„œ ì»¤ì„œê°€ ì¶œë ¥ë˜ì§€ ì•Šê²Œ í•œë‹¤.
-* ë°›ëŠ”ê°’: X
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: Ä¿¼­Á¦°ÅÇÔ¼ö.
+* ±â´É: ÄÜ¼Ö¿¡¼­ Ä¿¼­°¡ Ãâ·ÂµÇÁö ¾Ê°Ô ÇÑ´Ù.
+* ¹Þ´Â°ª: X
+* ¸®ÅÏ°ª: X
 */
 void ljh_cursor(void)
 {
@@ -726,15 +834,15 @@ void ljh_cursor(void)
 
 
 /*
-* ì´ë¦„: ì´ˆê¸°í™”í•¨ìˆ˜.
-* ê¸°ëŠ¥: ê²Œìž„ ì‹œìž‘ ì „ ì´ˆê¸°í™”ë¥¼ ì§„í–‰í•œë‹¤.
-* ë°›ëŠ”ê°’: X
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: ÃÊ±âÈ­ÇÔ¼ö.
+* ±â´É: °ÔÀÓ ½ÃÀÛ Àü ÃÊ±âÈ­¸¦ ÁøÇàÇÑ´Ù.
+* ¹Þ´Â°ª: X
+* ¸®ÅÏ°ª: X
 */
 void ljh_game_reset(void)
 {
-    //ìºë¦­í„° ê´€ë ¨ ìž„ì‹œ ì´ˆê¸°í™”.
-    gotoxy(x, y); //ì´ˆê¸° ìºë¦­í„° ì¶œë ¥.
+    //Ä³¸¯ÅÍ °ü·Ã ÀÓ½Ã ÃÊ±âÈ­.
+    gotoxy(x, y); //ÃÊ±â Ä³¸¯ÅÍ Ãâ·Â.
     printf(" o ");
     gotoxy(x, y + 1);
     printf("(|)=");
@@ -742,8 +850,8 @@ void ljh_game_reset(void)
     printf("- -");
 
 
-    //ëª¬ìŠ¤í„° ê´€ë ¨ ì´ˆê¸°í™”.
-    //ëª¬ìŠ¤í„° ì´ˆê¸° Xì¢Œí‘œ ì§€ì •.[3]
+    //¸ó½ºÅÍ °ü·Ã ÃÊ±âÈ­.
+    //¸ó½ºÅÍ ÃÊ±â XÁÂÇ¥ ÁöÁ¤.[3]
     for (int i = 0; i < 15; i = i + 3)
     {
         monster[3][i] = MONSTER_FIRST_X_POSITION;
@@ -759,88 +867,88 @@ void ljh_game_reset(void)
 
     for (int i = 0; i < 15; i++)
     {
-        monster[0][i] = 1;//ëª¬ìŠ¤í„° ì í”„ ìƒíƒœ ì§€ì •.[0]
-        monster[1][i] = 1;//ëª¬ìŠ¤í„° ì í”„ ìµœëŒ€ë†’ì´ ë„ë‹¬ ì§€ì •.[1]
-        monster[2][i] = 0;//ëª¬ìŠ¤í„° ì í”„ ë°©í–¥ ì§€ì •.[2]
-        monster[4][i] = MONSTER_Y_POSITION; //ëª¬ìŠ¤í„° ì´ˆê¸° Yì¢Œí‘œ ì§€ì •.[4]
-        monster[5][i] = MONSTER_FIRST_HP; //ëª¬ìŠ¤í„° 1ë‹¨ê³„ ì²´ë ¥ ì§€ì •.[5]
-        monster[6][i] = MONSTER_FIRST_MONEY;//ëª¬ìŠ¤í„° 1ë‹¨ê³„ ê³¨ë“œ ì§€ì •.[6]
-        monster[7][i] = MONSTER_FIRST_DAMAGE;//ëª¬ìŠ¤í„° 1ë‹¨ê³„ ê³µê²©ë ¥ ì§€ì •.[7]
-        monster[8][i] = MONSTER_FIRST_RANK;//ëª¬ìŠ¤í„° 1ë‹¨ê³„ ë³€ì´ ë‹¨ê³„ ì§€ì •.[8]
+        monster[0][i] = 1;//¸ó½ºÅÍ Á¡ÇÁ »óÅÂ ÁöÁ¤.[0]
+        monster[1][i] = 1;//¸ó½ºÅÍ Á¡ÇÁ ÃÖ´ë³ôÀÌ µµ´Þ ÁöÁ¤.[1]
+        monster[2][i] = 0;//¸ó½ºÅÍ Á¡ÇÁ ¹æÇâ ÁöÁ¤.[2]
+        monster[4][i] = MONSTER_Y_POSITION; //¸ó½ºÅÍ ÃÊ±â YÁÂÇ¥ ÁöÁ¤.[4]
+        monster[5][i] = MONSTER_FIRST_HP; //¸ó½ºÅÍ 1´Ü°è Ã¼·Â ÁöÁ¤.[5]
+        monster[6][i] = MONSTER_FIRST_MONEY;//¸ó½ºÅÍ 1´Ü°è °ñµå ÁöÁ¤.[6]
+        monster[7][i] = MONSTER_FIRST_DAMAGE;//¸ó½ºÅÍ 1´Ü°è °ø°Ý·Â ÁöÁ¤.[7]
+        monster[8][i] = MONSTER_FIRST_RANK;//¸ó½ºÅÍ 1´Ü°è º¯ÀÌ ´Ü°è ÁöÁ¤.[8]
     }
 }
 
 
 /*
-* ì´ë¦„: ê²Œìž„í™”ë©´ì¶œë ¥í•¨ìˆ˜.
-* ê¸°ëŠ¥: ì²´ë ¥,ê³µê²©ë ¥,ëˆ,ë¬´ê¸° í‘œì‹œí•˜ëŠ” í•¨ìˆ˜
-* ë°›ëŠ”ê°’: ì²´ë ¥, ê³µê²©ë ¥, ëˆ ë³€ìˆ˜.
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: °ÔÀÓÈ­¸éÃâ·ÂÇÔ¼ö.
+* ±â´É: Ã¼·Â,°ø°Ý·Â,µ·,¹«±â Ç¥½ÃÇÏ´Â ÇÔ¼ö
+* ¹Þ´Â°ª: Ã¼·Â, °ø°Ý·Â, µ· º¯¼ö.
+* ¸®ÅÏ°ª: X
 */
 void hh_consolebar(void)
 {
-    gotoxy(0, 0);//ìƒ 
+    gotoxy(0, 0);//»ó 
     for (int i = 0; i < 40; i++)
     {
-        printf("â–¡");
+        printf("¡à");
     }
-    gotoxy(0, 24);//í•˜
+    gotoxy(0, 24);//ÇÏ
     for (int i = 0; i < 40; i++)
     {
-        printf("â–¡");
+        printf("¡à");
     }
 
-    for (int i = 1; i < 24; i++)//ì¢Œ  
+    for (int i = 1; i < 24; i++)//ÁÂ  
     {
         gotoxy(0, i);
-        printf("â–¡");
+        printf("¡à");
     }
-    for (int i = 1; i < 24; i++)//ìš° 
+    for (int i = 1; i < 24; i++)//¿ì 
     {
         gotoxy(78, i);
-        printf("â–¡");
+        printf("¡à");
     }
     printf("\n");
 
     gotoxy(54, 1);
-    printf("â–¡ ì²´ë ¥: %3d / 100   \n", HP);
+    printf("¡à Ã¼·Â: %3d / 100   \n", HP);
     gotoxy(54, 2);
-    printf("â–¡ ê³µê²©ë ¥: %3d       \n", weapon_damage);
+    printf("¡à °ø°Ý·Â: %3d       \n", weapon_damage);
     gotoxy(54, 3);
-    printf("â–¡ ëˆ: %5d         \n", money);
+    printf("¡à µ·: %5d         \n", money);
     gotoxy(54, 4);
 
     switch (weapon_kind)
     {
     case 0:
-        printf("â–¡ ë¬´ê¸°: ê¸°ë³¸ì£¼ì‚¬ê¸°  \n");
+        printf("¡à ¹«±â: ±âº»ÁÖ»ç±â  \n");
         break;
     case 1:
-        printf("â–¡ ë¬´ê¸°: AZì£¼ì‚¬ê¸°  \n");
+        printf("¡à ¹«±â: AZÁÖ»ç±â  \n");
         break;
     case 2:
-        printf("â–¡ ë¬´ê¸°: ëª¨ë”ë‚˜ì£¼ì‚¬ê¸°  \n");
+        printf("¡à ¹«±â: ¸ð´õ³ªÁÖ»ç±â  \n");
         break;
     case 3:
-        printf("â–¡ ë¬´ê¸°: í™”ì´ìžì£¼ì‚¬ê¸°  \n");
+        printf("¡à ¹«±â: È­ÀÌÀÚÁÖ»ç±â  \n");
         break;
     }
 
     gotoxy(54, 5);
-    printf("â–¡â–¡â–¡â–¡â–¡â–¡â–¡â–¡â–¡â–¡â–¡â–¡\n");
+    printf("¡à¡à¡à¡à¡à¡à¡à¡à¡à¡à¡à¡à\n");
 }
 
 
 /*
-* ì´ë¦„:ìºë¦­í„°ì²˜ë¦¬í•¨ìˆ˜.
-* ê¸°ëŠ¥: ê²Œìž„ ì¤‘ ìž…ë ¥í•˜ëŠ” í‚¤ë“¤ì„ ì²˜ë¦¬í•˜ê³ , ìºë¦­í„°ì˜ ì •ë³´ë¥¼ ì²˜ë¦¬í•œë‹¤.
-* ë°›ëŠ”ê°’: X
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§:Ä³¸¯ÅÍÃ³¸®ÇÔ¼ö.
+* ±â´É: °ÔÀÓ Áß ÀÔ·ÂÇÏ´Â Å°µéÀ» Ã³¸®ÇÏ°í, Ä³¸¯ÅÍÀÇ Á¤º¸¸¦ Ã³¸®ÇÑ´Ù.
+* ¹Þ´Â°ª: X
+* ¸®ÅÏ°ª: X
 */
 void ljh_CharTreat()
 {
-    //ìºë¦­í„° ì¶œë ¥
-    if (char_side == 0) //ìºë¦­í„°ê°€ ì˜¤ë¥¸ìª½ì„ ë°”ë¼ë³´ê³  ìžˆëŠ” ê²½ìš°.
+    //Ä³¸¯ÅÍ Ãâ·Â
+    if (char_side == 0) //Ä³¸¯ÅÍ°¡ ¿À¸¥ÂÊÀ» ¹Ù¶óº¸°í ÀÖ´Â °æ¿ì.
     {
         gotoxy(x, y);
         printf(" o  ");
@@ -849,7 +957,7 @@ void ljh_CharTreat()
         gotoxy(x, y + 2);
         printf("- - ");
     }
-    else //ìºë¦­í„°ê°€ ì™¼ìª½ì„ ë°”ë¼ë³´ê³  ìžˆëŠ” ê²½ìš°.
+    else //Ä³¸¯ÅÍ°¡ ¿ÞÂÊÀ» ¹Ù¶óº¸°í ÀÖ´Â °æ¿ì.
     {
         gotoxy(x, y);
         printf("  o ");
@@ -859,19 +967,19 @@ void ljh_CharTreat()
         printf(" - -");
     }
 
-    //í‚¤ ìž…ë ¥ ì²˜ë¦¬
-    //ì˜¤ë¥¸ìª½ ë°©í–¥í‚¤.
+    //Å° ÀÔ·Â Ã³¸®
+    //¿À¸¥ÂÊ ¹æÇâÅ°.
     if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
     {
         char_side = 0;
 
-        if (x != (RIGHT_BOUND - 3)) //ë§µì˜ ëì— ë„ë‹¬í•œ ê²½ìš° ë” ì´ë™í•˜ì§€ ì•ŠìŒ.
+        if (x != (RIGHT_BOUND - 3)) //¸ÊÀÇ ³¡¿¡ µµ´ÞÇÑ °æ¿ì ´õ ÀÌµ¿ÇÏÁö ¾ÊÀ½.
         {
-            //ì´ì „ ìºë¦­í„° ì§€ìš°ê¸°
+            //ÀÌÀü Ä³¸¯ÅÍ Áö¿ì±â
             gotoxy(x, y);
             printf("    ");
 
-            if (x <= 7) //ì™¼ìª½ ê²½ê³„ì—ì„œ ì´ì „ ìºë¦­í„°ë¥¼ ì§€ìš¸ ë•ŒëŠ” x - 7ì´ ìŒìˆ˜ê°€ ë  ê°€ëŠ¥ì„±ì´ ìžˆë‹¤. ì´ë¥¼ ë°°ì œí•´ì¤˜ì•¼ ì˜ë„ëŒ€ë¡œ ì¶œë ¥ëœë‹¤.
+            if (x <= 7) //¿ÞÂÊ °æ°è¿¡¼­ ÀÌÀü Ä³¸¯ÅÍ¸¦ Áö¿ï ¶§´Â x - 7ÀÌ À½¼ö°¡ µÉ °¡´É¼ºÀÌ ÀÖ´Ù. ÀÌ¸¦ ¹èÁ¦ÇØÁà¾ß ÀÇµµ´ë·Î Ãâ·ÂµÈ´Ù.
             {
                 gotoxy(2, y + 1);
                 printf("                    ");
@@ -885,15 +993,26 @@ void ljh_CharTreat()
             gotoxy(x, y + 2);
             printf("    ");
 
-            //ìƒˆ ìºë¦­í„° ì¶œë ¥í•˜ê¸°
-            gotoxy(++x, y);
+            //»õ Ä³¸¯ÅÍ Ãâ·ÂÇÏ±â
+
+            if (move_control_right == MOVE_DEGREE)
+            {
+                x++;
+                move_control_right = 0;
+            }
+            else
+            {
+                move_control_right++;
+            }
+
+            gotoxy(x, y);
             printf(" o ");
             gotoxy(x, y + 1);
             printf("(|)=");
             gotoxy(x, y + 2);
             printf("- -");
 
-            if ((attack_condition == 1) && (x <= 69)) //ìºë¦­í„°ê°€ ê³µê²© ìƒíƒœì´ê³  ê²½ê³„ì— ë‹«ì§€ ì•Šì€ ê²½ìš°
+            if ((attack_condition == 1) && (x <= 69)) //Ä³¸¯ÅÍ°¡ °ø°Ý »óÅÂÀÌ°í °æ°è¿¡ ´ÝÁö ¾ÊÀº °æ¿ì
             {
                 gotoxy(x + 4, y + 1);
                 switch (weapon_kind)
@@ -915,18 +1034,18 @@ void ljh_CharTreat()
         }
     }
 
-    //ì™¼ìª½ ë°©í–¥í‚¤.
+    //¿ÞÂÊ ¹æÇâÅ°.
     if (GetAsyncKeyState(VK_LEFT) & 0x8000)
     {
         char_side = 1;
 
         if (x != LEFT_BOUND)
         {
-            //ì´ì „ ìºë¦­í„° ì§€ìš°ê¸°
+            //ÀÌÀü Ä³¸¯ÅÍ Áö¿ì±â
             gotoxy(x, y);
             printf("    ");
 
-            if (x <= 7) //ì™¼ìª½ìœ¼ë¡œ ì´ë™ ì‹œ ì´ì „ ìºë¦­í„°ë¥¼ ì§€ìš¸ ë•ŒëŠ” x - 7ì´ ìŒìˆ˜ê°€ ë  ê°€ëŠ¥ì„±ì´ ìžˆë‹¤. ì´ë¥¼ ë°°ì œí•´ì¤˜ì•¼ ì˜ë„ëŒ€ë¡œ ì¶œë ¥ëœë‹¤.
+            if (x <= 7) //¿ÞÂÊÀ¸·Î ÀÌµ¿ ½Ã ÀÌÀü Ä³¸¯ÅÍ¸¦ Áö¿ï ¶§´Â x - 7ÀÌ À½¼ö°¡ µÉ °¡´É¼ºÀÌ ÀÖ´Ù. ÀÌ¸¦ ¹èÁ¦ÇØÁà¾ß ÀÇµµ´ë·Î Ãâ·ÂµÈ´Ù.
             {
                 gotoxy(2, y + 1);
                 printf("                    ");
@@ -940,15 +1059,25 @@ void ljh_CharTreat()
             gotoxy(x, y + 2);
             printf("    ");
 
-            //ìƒˆ ìºë¦­í„° ì¶œë ¥í•˜ê¸°
-            gotoxy(--x, y);
+            //»õ Ä³¸¯ÅÍ Ãâ·ÂÇÏ±â
+            if (move_control_left == MOVE_DEGREE)
+            {
+                x--;
+                move_control_left = 0;
+            }
+            else
+            {
+                move_control_left++;
+            }
+
+            gotoxy(x, y);
             printf("  o ");
             gotoxy(x, y + 1);
             printf("=(|)");
             gotoxy(x, y + 2);
             printf(" - -");
 
-            if ((attack_condition == 1) && (x >= 7)) //ìºë¦­í„°ê°€ ê³µê²© ìƒíƒœì´ê³  ê²½ê³„ì— ë‹«ì§€ ì•Šì€ ê²½ìš°.
+            if ((attack_condition == 1) && (x >= 7)) //Ä³¸¯ÅÍ°¡ °ø°Ý »óÅÂÀÌ°í °æ°è¿¡ ´ÝÁö ¾ÊÀº °æ¿ì.
             {
                 switch (weapon_kind)
                 {
@@ -973,19 +1102,19 @@ void ljh_CharTreat()
         }
     }
 
-    //ìœ— ë°©í–¥í‚¤ (ì í”„) ê´€ë ¨.
-    if ((GetAsyncKeyState(VK_UP) & 0x8000) && (jump == 0)) //ìœ„ í™”ì‚´í‘œ í‚¤ê°€ ëˆŒë¦¬ê³  ì í”„ ì¤‘ì´ ì•„ë‹ ë•Œ ìˆ˜í–‰.
+    //À­ ¹æÇâÅ° (Á¡ÇÁ) °ü·Ã.
+    if ((GetAsyncKeyState(VK_UP) & 0x8000) && (jump == 0)) //À§ È­»ìÇ¥ Å°°¡ ´­¸®°í Á¡ÇÁ ÁßÀÌ ¾Æ´Ò ¶§ ¼öÇà.
     {
         jump = 1;
     }
 
-    if ((jump == 1) && (jump_across == 0)) //ì í”„ ì¤‘ì´ê³  ìµœëŒ€ ë†’ì´ ë„ë‹¬ ì „ì¼ ë•Œ ìˆ˜í–‰.
+    if ((jump == 1) && (jump_across == 0)) //Á¡ÇÁ ÁßÀÌ°í ÃÖ´ë ³ôÀÌ µµ´Þ ÀüÀÏ ¶§ ¼öÇà.
     {
-        //ì´ì „ ìºë¦­í„° ì§€ìš°ê¸°
+        //ÀÌÀü Ä³¸¯ÅÍ Áö¿ì±â
         gotoxy(x, y);
         printf("    ");
 
-        if (x <= 7) //ì™¼ìª½ ê²½ê³„ì—ì„œ ìºë¦­í„°ë¥¼ ì§€ìš¸ ë•ŒëŠ” x - 7ì´ ìŒìˆ˜ê°€ ë  ê°€ëŠ¥ì„±ì´ ìžˆë‹¤. ì´ë¥¼ ë°°ì œí•´ì¤˜ì•¼ ì˜ë„ëŒ€ë¡œ ì¶œë ¥ëœë‹¤.
+        if (x <= 7) //¿ÞÂÊ °æ°è¿¡¼­ Ä³¸¯ÅÍ¸¦ Áö¿ï ¶§´Â x - 7ÀÌ À½¼ö°¡ µÉ °¡´É¼ºÀÌ ÀÖ´Ù. ÀÌ¸¦ ¹èÁ¦ÇØÁà¾ß ÀÇµµ´ë·Î Ãâ·ÂµÈ´Ù.
         {
             gotoxy(2, y + 1);
             printf("                    ");
@@ -999,7 +1128,7 @@ void ljh_CharTreat()
         gotoxy(x, y + 2);
         printf("    ");
 
-        //ì¢Œí‘œ ë³€ê²½
+        //ÁÂÇ¥ º¯°æ
         if (jump_control == JUMP_DEGREE)
         {
             y -= JUMP_GRAVITY;
@@ -1010,8 +1139,8 @@ void ljh_CharTreat()
             jump_control++;
         }
 
-        //ìƒˆ ìºë¦­í„° ì¶œë ¥í•˜ê¸°
-        if (char_side == 0) //í˜„ìž¬ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì›€ì§ì´ê³  ìžˆëŠ” ê²½ìš°.
+        //»õ Ä³¸¯ÅÍ Ãâ·ÂÇÏ±â
+        if (char_side == 0) //ÇöÀç ¿À¸¥ÂÊÀ¸·Î ¿òÁ÷ÀÌ°í ÀÖ´Â °æ¿ì.
         {
             gotoxy(x, y);
             printf(" o ");
@@ -1020,7 +1149,7 @@ void ljh_CharTreat()
             gotoxy(x, y + 2);
             printf("- -");
 
-            if ((attack_condition == 1) && (x <= 69)) //ìºë¦­í„°ê°€ ê³µê²© ìƒíƒœì´ê³  ê²½ê³„ì— ë‹«ì§€ ì•Šì€ ê²½ìš°
+            if ((attack_condition == 1) && (x <= 69)) //Ä³¸¯ÅÍ°¡ °ø°Ý »óÅÂÀÌ°í °æ°è¿¡ ´ÝÁö ¾ÊÀº °æ¿ì
             {
                 gotoxy(x + 4, y + 1);
                 switch (weapon_kind)
@@ -1040,7 +1169,7 @@ void ljh_CharTreat()
                 }
             }
         }
-        else //í˜„ìž¬ ì™¼ìª½ìœ¼ë¡œ ì›€ì§ì´ê³  ìžˆëŠ” ê²½ìš°.
+        else //ÇöÀç ¿ÞÂÊÀ¸·Î ¿òÁ÷ÀÌ°í ÀÖ´Â °æ¿ì.
         {
             gotoxy(x, y);
             printf("  o ");
@@ -1049,7 +1178,7 @@ void ljh_CharTreat()
             gotoxy(x, y + 2);
             printf(" - -");
 
-            if ((attack_condition == 1) && (x >= 7)) //ìºë¦­í„°ê°€ ê³µê²© ìƒíƒœì´ê³  ê²½ê³„ì— ë‹«ì§€ ì•Šì€ ê²½ìš°.
+            if ((attack_condition == 1) && (x >= 7)) //Ä³¸¯ÅÍ°¡ °ø°Ý »óÅÂÀÌ°í °æ°è¿¡ ´ÝÁö ¾ÊÀº °æ¿ì.
             {
                 switch (weapon_kind)
                 {
@@ -1079,13 +1208,13 @@ void ljh_CharTreat()
         jump_across++;
     }
 
-    if ((jump == 1) && (jump_across >= 1)) //ì í”„ ì¤‘ì´ê³  ìµœëŒ€ ë†’ì´ ë„ë‹¬ í›„ì¼ ë•Œ ìˆ˜í–‰.
+    if ((jump == 1) && (jump_across >= 1)) //Á¡ÇÁ ÁßÀÌ°í ÃÖ´ë ³ôÀÌ µµ´Þ ÈÄÀÏ ¶§ ¼öÇà.
     {
-        //ì´ì „ ìºë¦­í„° ì§€ìš°ê¸°
+        //ÀÌÀü Ä³¸¯ÅÍ Áö¿ì±â
         gotoxy(x, y);
         printf("    ");
 
-        if (x <= 7) //ì™¼ìª½ ê²½ê³„ì—ì„œ ì´ì „ ìºë¦­í„°ë¥¼ ì§€ìš¸ ë•ŒëŠ” x - 7ì´ ìŒìˆ˜ê°€ ë  ê°€ëŠ¥ì„±ì´ ìžˆë‹¤. ì´ë¥¼ ë°°ì œí•´ì¤˜ì•¼ ì˜ë„ëŒ€ë¡œ ì¶œë ¥ëœë‹¤.
+        if (x <= 7) //¿ÞÂÊ °æ°è¿¡¼­ ÀÌÀü Ä³¸¯ÅÍ¸¦ Áö¿ï ¶§´Â x - 7ÀÌ À½¼ö°¡ µÉ °¡´É¼ºÀÌ ÀÖ´Ù. ÀÌ¸¦ ¹èÁ¦ÇØÁà¾ß ÀÇµµ´ë·Î Ãâ·ÂµÈ´Ù.
         {
             gotoxy(2, y + 1);
             printf("                    ");
@@ -1099,7 +1228,7 @@ void ljh_CharTreat()
         gotoxy(x, y + 2);
         printf("    ");
 
-        //ì¢Œí‘œ ë³€ê²½
+        //ÁÂÇ¥ º¯°æ
         if (jump_control == JUMP_DEGREE)
         {
             y += JUMP_GRAVITY;
@@ -1110,8 +1239,8 @@ void ljh_CharTreat()
             jump_control++;
         }
 
-        //ìƒˆ ìºë¦­í„° ì¶œë ¥í•˜ê¸°
-        if (char_side == 0) //í˜„ìž¬ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì›€ì§ì´ê³  ìžˆëŠ” ê²½ìš°.
+        //»õ Ä³¸¯ÅÍ Ãâ·ÂÇÏ±â
+        if (char_side == 0) //ÇöÀç ¿À¸¥ÂÊÀ¸·Î ¿òÁ÷ÀÌ°í ÀÖ´Â °æ¿ì.
         {
             gotoxy(x, y);
             printf(" o ");
@@ -1120,7 +1249,7 @@ void ljh_CharTreat()
             gotoxy(x, y + 2);
             printf("- -");
 
-            if ((attack_condition == 1) && (x <= 69)) //ìºë¦­í„°ê°€ ê³µê²© ìƒíƒœì´ê³  ê²½ê³„ì— ë‹«ì§€ ì•Šì€ ê²½ìš°
+            if ((attack_condition == 1) && (x <= 69)) //Ä³¸¯ÅÍ°¡ °ø°Ý »óÅÂÀÌ°í °æ°è¿¡ ´ÝÁö ¾ÊÀº °æ¿ì
             {
                 gotoxy(x + 4, y + 1);
                 switch (weapon_kind)
@@ -1140,7 +1269,7 @@ void ljh_CharTreat()
                 }
             }
         }
-        else //í˜„ìž¬ ì™¼ìª½ìœ¼ë¡œ ì›€ì§ì´ê³  ìžˆëŠ” ê²½ìš°.
+        else //ÇöÀç ¿ÞÂÊÀ¸·Î ¿òÁ÷ÀÌ°í ÀÖ´Â °æ¿ì.
         {
             gotoxy(x, y);
             printf("  o ");
@@ -1149,7 +1278,7 @@ void ljh_CharTreat()
             gotoxy(x, y + 2);
             printf(" - -");
 
-            if ((attack_condition == 1) && (x >= 7)) //ìºë¦­í„°ê°€ ê³µê²© ìƒíƒœì´ê³  ê²½ê³„ì— ë‹«ì§€ ì•Šì€ ê²½ìš°.
+            if ((attack_condition == 1) && (x >= 7)) //Ä³¸¯ÅÍ°¡ °ø°Ý »óÅÂÀÌ°í °æ°è¿¡ ´ÝÁö ¾ÊÀº °æ¿ì.
             {
                 switch (weapon_kind)
                 {
@@ -1181,19 +1310,26 @@ void ljh_CharTreat()
         jump_across = 0;
     }
 
-    //ìŠ¤íŽ˜ì´ìŠ¤ë°”(ê³µê²©).
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+    //½ºÆäÀÌ½º¹Ù(°ø°Ý).
+    space_cooltime_last_time = time(NULL); //°ø°Ý »óÅÂ Á¾·á ÀÌÈÄ ½ÃÁ¡.
+
+    if ((space_cooltime == 1) && (difftime(space_cooltime_last_time, space_cooltime_start_time) >= ATTACK_COOLTIME)) //ÄðÅ¸ÀÓ »óÅÂ·Î Ç¥½ÃµÇ¾î ÀÖ´Â °æ¿ì.
+    {
+        space_cooltime = 0;
+    }
+
+    if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && (space_cooltime == 0)) //space¹Ù ÀÔ·Â ÁßÀÌ°í, ÄðÅ¸ÀÓ »óÅÂ°¡ ¾Æ´Ñ °æ¿ì.
     {
         attack_condition = 1;
-        space_start_time = time(NULL); //spaceë°” ëˆ„ë¥¸ ì‹œì  ì €ìž¥.
+        space_start_time = time(NULL); //space¹Ù ´©¸¥ ½ÃÁ¡ ÀúÀå.
 
-        //ìºë¦­í„°ê°€ ì›€ì§ì´ì§€ ì•Šì„ ë•Œ ë¬´ê¸° ì¶œë ¥í•˜ê¸°.
-        if (char_side == 0) //í˜„ìž¬ ì˜¤ë¥¸ìª½ì„ ë°”ë¼ë³´ê³  ìžˆëŠ” ê²½ìš°.
+        //Ä³¸¯ÅÍ°¡ ¿òÁ÷ÀÌÁö ¾ÊÀ» ¶§ ¹«±â Ãâ·ÂÇÏ±â.
+        if (char_side == 0) //ÇöÀç ¿À¸¥ÂÊÀ» ¹Ù¶óº¸°í ÀÖ´Â °æ¿ì.
         {
-            if (x <= 69) //ê²½ê³„ì— ë‹«ì§€ ì•Šì€ ê²½ìš°.
+            if (x <= 69) //°æ°è¿¡ ´ÝÁö ¾ÊÀº °æ¿ì.
             {
-                //ì§€ìš°ê¸°
-                if (x <= 7) //ì™¼ìª½ ê²½ê³„ì—ì„œ ì´ì „ ìºë¦­í„°ë¥¼ ì§€ìš¸ ë•ŒëŠ” x - 7ì´ ìŒìˆ˜ê°€ ë  ê°€ëŠ¥ì„±ì´ ìžˆë‹¤. ì´ë¥¼ ë°°ì œí•´ì¤˜ì•¼ ì˜ë„ëŒ€ë¡œ ì¶œë ¥ëœë‹¤.
+                //Áö¿ì±â
+                if (x <= 7) //¿ÞÂÊ °æ°è¿¡¼­ ÀÌÀü Ä³¸¯ÅÍ¸¦ Áö¿ï ¶§´Â x - 7ÀÌ À½¼ö°¡ µÉ °¡´É¼ºÀÌ ÀÖ´Ù. ÀÌ¸¦ ¹èÁ¦ÇØÁà¾ß ÀÇµµ´ë·Î Ãâ·ÂµÈ´Ù.
                 {
                     gotoxy(2, y + 1);
                     printf("                    ");
@@ -1204,7 +1340,7 @@ void ljh_CharTreat()
                     printf("                    ");
                 }
 
-                //ì¶œë ¥í•˜ê¸°
+                //Ãâ·ÂÇÏ±â
                 gotoxy(x, y + 1);
                 printf("(|)=");
 
@@ -1226,12 +1362,12 @@ void ljh_CharTreat()
                 }
             }
         }
-        else //í˜„ìž¬ ì™¼ìª½ì„ ë°”ë¼ë³´ê³  ìžˆëŠ” ê²½ìš°
+        else //ÇöÀç ¿ÞÂÊÀ» ¹Ù¶óº¸°í ÀÖ´Â °æ¿ì
         {
-            if (x >= 7) //ê²½ê³„ì— ë‹«ì§€ ì•Šì€ ê²½ìš°.
+            if (x >= 7) //°æ°è¿¡ ´ÝÁö ¾ÊÀº °æ¿ì.
             {
-                //ì§€ìš°ê¸°
-                if (x <= 7) //ì™¼ìª½ìœ¼ë¡œ ì´ë™ ì‹œ ì´ì „ ìºë¦­í„°ë¥¼ ì§€ìš¸ ë•ŒëŠ” x - 7ì´ ìŒìˆ˜ê°€ ë  ê°€ëŠ¥ì„±ì´ ìžˆë‹¤. ì´ë¥¼ ë°°ì œí•´ì¤˜ì•¼ ì˜ë„ëŒ€ë¡œ ì¶œë ¥ëœë‹¤.
+                //Áö¿ì±â
+                if (x <= 7) //¿ÞÂÊÀ¸·Î ÀÌµ¿ ½Ã ÀÌÀü Ä³¸¯ÅÍ¸¦ Áö¿ï ¶§´Â x - 7ÀÌ À½¼ö°¡ µÉ °¡´É¼ºÀÌ ÀÖ´Ù. ÀÌ¸¦ ¹èÁ¦ÇØÁà¾ß ÀÇµµ´ë·Î Ãâ·ÂµÈ´Ù.
                 {
                     gotoxy(2, y + 1);
                     printf("                    ");
@@ -1242,7 +1378,7 @@ void ljh_CharTreat()
                     printf("                    ");
                 }
 
-                //ì¶œë ¥í•˜ê¸°
+                //Ãâ·ÂÇÏ±â
                 gotoxy(x, y + 1);
                 printf("=(|)");
 
@@ -1269,16 +1405,19 @@ void ljh_CharTreat()
         }
     }
 
-    if (attack_condition == 1) //í˜„ìž¬ ê³µê²© ìƒíƒœì¸ ê²½ìš°.
+    if (attack_condition == 1) //ÇöÀç °ø°Ý »óÅÂÀÎ °æ¿ì.
     {
-        long long space_last_time = time(NULL); //spaceë°” ëˆ„ë¥¸ ì´í›„ ì‹œì .
+        long long space_last_time = time(NULL); //space¹Ù ´©¸¥ ÀÌÈÄ ½ÃÁ¡.
 
-        if (difftime(space_last_time, space_start_time) >= ATTACK_CONDITION_TIME) //ì‹œìž‘ ì´í›„ íŠ¹ì • ì‹œê°„(ê³µê²© ìƒíƒœë¥¼ ì§€ì†í•  ì‹œê°„)ì´ ì§€ë‚œ ê²½ìš°.
+        if (difftime(space_last_time, space_start_time) >= ATTACK_CONDITION_TIME) //½ÃÀÛ ÀÌÈÄ Æ¯Á¤ ½Ã°£(°ø°Ý »óÅÂ¸¦ Áö¼ÓÇÒ ½Ã°£)ÀÌ Áö³­ °æ¿ì.
         {
+            space_cooltime_start_time = time(NULL); //°ø°Ý »óÅÂ Á¾·á ½ÃÁ¡.
+            space_cooltime = 1;
+
             attack_condition = 0;
 
-            //ë¬´ê¸° ì§€ìš°ê³  ë‹¤ì‹œ ì¶œë ¥
-            if (x <= 7) //ì™¼ìª½ ê²½ê³„ì—ì„œ ì´ì „ ìºë¦­í„°ë¥¼ ì§€ìš¸ ë•ŒëŠ” x - 7ì´ ìŒìˆ˜ê°€ ë  ê°€ëŠ¥ì„±ì´ ìžˆë‹¤. ì´ë¥¼ ë°°ì œí•´ì¤˜ì•¼ ì˜ë„ëŒ€ë¡œ ì¶œë ¥ëœë‹¤.
+            //¹«±â Áö¿ì°í ´Ù½Ã Ãâ·Â
+            if (x <= 7) //¿ÞÂÊ °æ°è¿¡¼­ ÀÌÀü Ä³¸¯ÅÍ¸¦ Áö¿ï ¶§´Â x - 7ÀÌ À½¼ö°¡ µÉ °¡´É¼ºÀÌ ÀÖ´Ù. ÀÌ¸¦ ¹èÁ¦ÇØÁà¾ß ÀÇµµ´ë·Î Ãâ·ÂµÈ´Ù.
             {
                 gotoxy(2, y + 1);
                 printf("                    ");
@@ -1304,7 +1443,7 @@ void ljh_CharTreat()
     }
 
 
-    //j, k, l(ë¬´ê¸° êµ¬ë§¤).
+    //j, k, l(¹«±â ±¸¸Å).
     if ((GetAsyncKeyState(0x4A) & 0x8000) && money >= 70)
     {
         if (weapon_kind == 1 && weapon_rank == 1 && money >= 140)
@@ -1321,9 +1460,9 @@ void ljh_CharTreat()
             weapon_rank++;
 
             gotoxy(3, 2);
-            printf("AZ ì ‘ì¢… ì™„ë£Œ! í•­ì²´ê°€ ìƒê¸°ëŠ” ê²ƒì´ ëŠê»´ì§‘ë‹ˆë‹¤!");
+            printf("AZ Á¢Á¾ ¿Ï·á! Ç×Ã¼°¡ »ý±â´Â °ÍÀÌ ´À²¸Áý´Ï´Ù!");
             gotoxy(3, 3);
-            printf("që¥¼ ëˆŒë ¤ ê²Œìž„ìœ¼ë¡œ ëŒì•„ê°€ì„¸ìš”.");
+            printf("q¸¦ ´­·Á °ÔÀÓÀ¸·Î µ¹¾Æ°¡¼¼¿ä.");
             while (1)
             {
                 char trash_j = getch();
@@ -1351,9 +1490,9 @@ void ljh_CharTreat()
             weapon_rank++;
 
             gotoxy(3, 2);
-            printf("ëª¨ë”ë‚˜ ì ‘ì¢… ì™„ë£Œ! ê³µê²©ë ¥ì´ ì¦ê°€í–ˆìŠµë‹ˆë‹¤!");
+            printf("¸ð´õ³ª Á¢Á¾ ¿Ï·á! °ø°Ý·ÂÀÌ Áõ°¡Çß½À´Ï´Ù!");
             gotoxy(3, 3);
-            printf("që¥¼ ëˆŒë ¤ ê²Œìž„ìœ¼ë¡œ ëŒì•„ê°€ì„¸ìš”.");
+            printf("q¸¦ ´­·Á °ÔÀÓÀ¸·Î µ¹¾Æ°¡¼¼¿ä.");
             while (1)
             {
                 char trash_k = getch();
@@ -1381,9 +1520,9 @@ void ljh_CharTreat()
             weapon_rank++;
 
             gotoxy(3, 2);
-            printf("í™”ì´ìž ì ‘ì¢… ì™„ë£Œ! ë¶€ìž‘ìš© ë”°ìœˆ ì—†ìŠµë‹ˆë‹¤!");
+            printf("È­ÀÌÀÚ Á¢Á¾ ¿Ï·á! ºÎÀÛ¿ë µûÀ© ¾ø½À´Ï´Ù!");
             gotoxy(3, 3);
-            printf("që¥¼ ëˆŒë ¤ ê²Œìž„ìœ¼ë¡œ ëŒì•„ê°€ì„¸ìš”.");
+            printf("q¸¦ ´­·Á °ÔÀÓÀ¸·Î µ¹¾Æ°¡¼¼¿ä.");
             while (1)
             {
                 char trash_l = getch();
@@ -1397,41 +1536,24 @@ void ljh_CharTreat()
     }
 
 
-    //h(ë„ì›€ë§).
+    //h(µµ¿ò¸»).
     if (GetAsyncKeyState(0x48) & 0x8000)
     {
-        system("cls");
-        printf("ì í”„ = ìœ„ë°©í–¥í‚¤(ìœ„í™”ì‚´í‘œ)\n");
-        printf("ì™¼ìª½ì´ë™ = ì™¼ìª½ë°©í–¥í‚¤(ì™¼ìª½í™”ì‚´í‘œ)\n");
-        printf("ì˜¤ë¥¸ìª½ì´ë™ = ì˜¤ë¥¸ìª½ë°©í–¥í‚¤(ì˜¤ë¥¸ìª½í™”ì‚´í‘œ)\n");
-        printf("ê³µê²© = spacebar\n");
-        printf("ê²Œìž„ì¢…ë£Œ = t\n");
-        printf("ê²Œìž„ìœ¼ë¡œ ëŒì•„ê°€ë ¤ë©´ që¥¼ ëˆ„ë¥´ì„¸ìš”.");
-
-        char trash = 0;
-        while (1)
-        {
-            trash = getch();
-            if (trash == 'q')
-            {
-                system("cls");
-                break;
-            }
-        }
+        insuk_help();
     }
 
 
-    //t(ê°•ì œì¢…ë£Œ).
+    //t(°­Á¦Á¾·á).
     if (GetAsyncKeyState(0x54) & 0x8000)
     {
         system("cls");
-        printf("\n\nê²Œìž„ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.\n\n");
+        printf("\n\n°ÔÀÓÀ» Á¾·áÇÕ´Ï´Ù.\n\n");
 
         exit(0);
     }
 
 
-    //n(ê²Œìž„ ìž¬ì‹œìž‘).
+    //n(°ÔÀÓ Àç½ÃÀÛ).
     if (GetAsyncKeyState(0x4e) & 0x8000)
     {
         system("cls");
@@ -1447,54 +1569,54 @@ void ljh_CharTreat()
 
 
 /*
-* ì´ë¦„ : sh_Restart
-* ê¸°ëŠ¥ : í‚¤ nì„ ëˆ„ë¥¼ê²½ìš° ê²Œìž„ ì† ê°’ë“¤ì„ ì´ˆê¸°í™”í•˜ê³  ì²˜ìŒë¶€í„° ë‹¤ì‹œ ì‹œìž‘í•˜ê²Œ í•¨
-* ì´ˆê¸°í™” ëª©ë¡(weapon_rank, weapon_damage, weapon_kind, HP, money, ëª¬ìŠ¤í„° ê°’ë“¤, ìºë¦­í„° ìœ„ì¹˜, ê²Œìž„ í”Œë ˆì´ íƒ€ìž„)
-* ë°›ëŠ” ê°’ : X
-* ë¦¬í„´ ê°’ : X
+* ÀÌ¸§ : sh_Restart
+* ±â´É : Å° nÀ» ´©¸¦°æ¿ì °ÔÀÓ ¼Ó °ªµéÀ» ÃÊ±âÈ­ÇÏ°í Ã³À½ºÎÅÍ ´Ù½Ã ½ÃÀÛÇÏ°Ô ÇÔ
+* ÃÊ±âÈ­ ¸ñ·Ï(weapon_rank, weapon_damage, weapon_kind, HP, money, ¸ó½ºÅÍ °ªµé, Ä³¸¯ÅÍ À§Ä¡, °ÔÀÓ ÇÃ·¹ÀÌ Å¸ÀÓ)
+* ¹Þ´Â °ª : X
+* ¸®ÅÏ °ª : X
 */
 void sh_Restart()
 {
-    //ë¬´ê¸°
+    //¹«±â
     weapon_rank = 0;
     weapon_damage = 1;
     weapon_kind = 0;
 
-    //ì²´ë ¥
+    //Ã¼·Â
     HP = 100;
     HP_condition = 0;
 
-    //ëˆ
+    //µ·
     money = 0;
 
-    //ê²Œìž„ ì‹œìž‘ ì‹œê°„ ì €ìž¥
+    //°ÔÀÓ ½ÃÀÛ ½Ã°£ ÀúÀå
     game_start_time = time(NULL);
 
-    //ì í”„ ê´€ë ¨ (ì í”„ ì¤‘ì— ì´ˆê¸°í™”í•´ì•¼ í•˜ëŠ” ê²½ìš°ë¥¼ ìœ„í•œ ê²ƒ)
+    //Á¡ÇÁ °ü·Ã (Á¡ÇÁ Áß¿¡ ÃÊ±âÈ­ÇØ¾ß ÇÏ´Â °æ¿ì¸¦ À§ÇÑ °Í)
     jump = 0;
     jump_across = 0;
     char_side = 0;
     jump_control = JUMP_DEGREE;
 
-    //ìºë¦­í„° ê³µê²© ìƒíƒœ (ê³µê²© ì¤‘ì— ì´ˆê¸°í™”í•´ì•¼ í•˜ëŠ” ê²½ìš°ë¥¼ ìœ„í•œ ê²ƒ)
+    //Ä³¸¯ÅÍ °ø°Ý »óÅÂ (°ø°Ý Áß¿¡ ÃÊ±âÈ­ÇØ¾ß ÇÏ´Â °æ¿ì¸¦ À§ÇÑ °Í)
     attack_condition = 0;
 
-    //ìºë¦­í„° ì´ˆê¸°ì¢Œí‘œ
+    //Ä³¸¯ÅÍ ÃÊ±âÁÂÇ¥
     x = 5;
     y = DOWN_BOUND - 2;
 
-    //ìºë¦­í„°ì´ˆê¸°ì¶œë ¥
-    gotoxy(x, y); //ìºë¦­í„° ì´ˆê¸°ì¢Œí‘œ ì§€ì •, ì´ˆê¸° ìºë¦­í„° ì¶œë ¥. (ì˜¤ë¥¸ìª½)
+    //Ä³¸¯ÅÍÃÊ±âÃâ·Â
+    gotoxy(x, y); //Ä³¸¯ÅÍ ÃÊ±âÁÂÇ¥ ÁöÁ¤, ÃÊ±â Ä³¸¯ÅÍ Ãâ·Â. (¿À¸¥ÂÊ)
     printf(" o ");
     gotoxy(x, y + 1);
     printf("(|)=");
     gotoxy(x, y + 2);
     printf("- -");
 
-    //ì‹œê°„
+    //½Ã°£
     game_start_time = time(NULL);
 
-    //ëª¬ìŠ¤í„°
+    //¸ó½ºÅÍ
     for (int i = 0; i < 15; i = i + 3)
     {
         monster[3][i] = MONSTER_FIRST_X_POSITION;
@@ -1510,14 +1632,14 @@ void sh_Restart()
 
     for (int i = 0; i < 15; i++)
     {
-        monster[0][i] = 1;//ëª¬ìŠ¤í„° ì í”„ ìƒíƒœ ì§€ì •.[0]
-        monster[1][i] = 1;//ëª¬ìŠ¤í„° ì í”„ ìµœëŒ€ë†’ì´ ë„ë‹¬ ì§€ì •.[1]
-        monster[2][i] = 0;//ëª¬ìŠ¤í„° ì í”„ ë°©í–¥ ì§€ì •.[2]
-        monster[4][i] = MONSTER_Y_POSITION; //ëª¬ìŠ¤í„° ì´ˆê¸° Yì¢Œí‘œ ì§€ì •.[4]
-        monster[5][i] = MONSTER_FIRST_HP; //ëª¬ìŠ¤í„° 1ë‹¨ê³„ ì²´ë ¥ ì§€ì •.[5]
-        monster[6][i] = MONSTER_FIRST_MONEY;//ëª¬ìŠ¤í„° 1ë‹¨ê³„ ê³¨ë“œ ì§€ì •.[6]
-        monster[7][i] = MONSTER_FIRST_DAMAGE;//ëª¬ìŠ¤í„° 1ë‹¨ê³„ ê³µê²©ë ¥ ì§€ì •.[7]
-        monster[8][i] = MONSTER_FIRST_RANK;//ëª¬ìŠ¤í„° 1ë‹¨ê³„ ë³€ì´ ë‹¨ê³„ ì§€ì •.[8]
+        monster[0][i] = 1;//¸ó½ºÅÍ Á¡ÇÁ »óÅÂ ÁöÁ¤.[0]
+        monster[1][i] = 1;//¸ó½ºÅÍ Á¡ÇÁ ÃÖ´ë³ôÀÌ µµ´Þ ÁöÁ¤.[1]
+        monster[2][i] = 0;//¸ó½ºÅÍ Á¡ÇÁ ¹æÇâ ÁöÁ¤.[2]
+        monster[4][i] = MONSTER_Y_POSITION; //¸ó½ºÅÍ ÃÊ±â YÁÂÇ¥ ÁöÁ¤.[4]
+        monster[5][i] = MONSTER_FIRST_HP; //¸ó½ºÅÍ 1´Ü°è Ã¼·Â ÁöÁ¤.[5]
+        monster[6][i] = MONSTER_FIRST_MONEY;//¸ó½ºÅÍ 1´Ü°è °ñµå ÁöÁ¤.[6]
+        monster[7][i] = MONSTER_FIRST_DAMAGE;//¸ó½ºÅÍ 1´Ü°è °ø°Ý·Â ÁöÁ¤.[7]
+        monster[8][i] = MONSTER_FIRST_RANK;//¸ó½ºÅÍ 1´Ü°è º¯ÀÌ ´Ü°è ÁöÁ¤.[8]
     }
 
     return;
@@ -1525,48 +1647,79 @@ void sh_Restart()
 
 
 /*
-* ì´ë¦„ : sh_HP(HPê´€ë¦¬, ê²Œìž„ì‹¤íŒ¨í•¨ìˆ˜)
-* ê¸°ëŠ¥ : ì²´ë ¥ì„ 1ì´ˆë§ˆë‹¤ ë¦¬ì  ì‹œí‚¤ê³  ì²´ë ¥ì´ 0ì´ ë  ê²½ìš° ê²Œìž„ íŒ¨ë°° ìƒíƒœë¥¼ ë³´ì—¬ì¤€ë‹¤.
-* HP_conditionì€ ì²´ë ¥ ë¦¬ì   ìƒíƒœë¥¼ ì˜ë¯¸, 0ì¼ê²½ìš° ì²´ë ¥ ë¦¬ì   x 1ì¼ê²½ìš° ì²´ë ¥ ë¦¬ì   o
-* ë°›ëŠ” ê°’: X
-* ë¦¬í„´ ê°’: X
+* ÀÌ¸§ : sh_HP(HP°ü¸®, °ÔÀÓ½ÇÆÐÇÔ¼ö)
+* ±â´É : Ã¼·ÂÀ» 1ÃÊ¸¶´Ù ¸®Á¨½ÃÅ°°í Ã¼·ÂÀÌ 0ÀÌ µÉ °æ¿ì °ÔÀÓ ÆÐ¹è »óÅÂ¸¦ º¸¿©ÁØ´Ù.
+* HP_conditionÀº Ã¼·Â ¸®Á¨ »óÅÂ¸¦ ÀÇ¹Ì, 0ÀÏ°æ¿ì Ã¼·Â ¸®Á¨ x 1ÀÏ°æ¿ì Ã¼·Â ¸®Á¨ o
+* ¹Þ´Â °ª: X
+* ¸®ÅÏ °ª: X
 */
-void sh_HP() //insert
+void sh_HP()
 {
-    if (HP <= 0) // ì²´ë ¥ì´ 0ì´í•˜ì¼ ë•Œ 
+
+    while (HP <= 0) // Ã¼·ÂÀÌ 0ÀÌÇÏÀÏ ¶§ 
     {
+        char option;
         system("cls");
-        printf("ë‹¹ì‹ ì€ ì½”ë¡œë‚˜ì— ê°ì—¼ë˜ì—ˆìŠµë‹ˆë‹¤...\n");
-        printf("ìž¬ë„ì „(n) or ê²Œìž„ ì¢…ë£Œ(t)");
-        while (1)
+
+        gotoxy(0, 0);//»ó 
+        for (int i = 0; i < 40; i++)
         {
-            char option = getch();
-            if (option == 'n')
-            {
-                sh_Restart();
-                break;
-            }
-            if (option == 't')
-            {
-                exit(0);
-            }
+            printf("¡à");
+        }
+        gotoxy(0, 24);//ÇÏ
+        for (int i = 0; i < 40; i++)
+        {
+            printf("¡à");
+        }
+
+        for (int i = 1; i < 24; i++)//ÁÂ  
+        {
+            gotoxy(0, i);
+            printf("¡à");
+        }
+        for (int i = 1; i < 24; i++)//¿ì 
+        {
+            gotoxy(78, i);
+            printf("¡à");
+        }
+
+        gotoxy(22, 7);
+        printf("#  #  ##  #   # #### ###     # ####");
+        gotoxy(22, 8);
+        printf("## # #  #  # #   ##  #  #   ## #  #");
+        gotoxy(22, 9);
+        printf("# ## #  #  # #   ##  #  #    # ####");
+        gotoxy(22, 10);
+        printf("#  #  ##    #   #### ###    ###   #");
+        gotoxy(22, 15);
+        printf("´ç½ÅÀº ÄÚ·Î³ª¿¡ °¨¿°µÇ¾ú½À´Ï´Ù...");
+        gotoxy(25, 16);
+        printf("ÀçµµÀü(n) or °ÔÀÓ Á¾·á(t)");
+        option = _getch();
+        if (option == 'n' || option == 'N')
+        {
+            sh_Restart();
+        }
+        if (option == 't' || option == 'T')
+        {
+            exit(0);
         }
         system("cls");
 
     }
 
-    if (HP < 100 && HP > 0 && HP_condition == 0) //ì²´ë ¥ ë¦¬ì   ìƒíƒœê°€ 0 ì´ê³  ì²´ë ¥ì´ 0ì´ˆê³¼ 100ë¯¸ë§Œì¼ ë•Œ 
+    if (HP < 100 && HP > 0 && HP_condition == 0) //Ã¼·Â ¸®Á¨ »óÅÂ°¡ 0 ÀÌ°í Ã¼·ÂÀÌ 0ÃÊ°ú 100¹Ì¸¸ÀÏ ¶§ 
     {
         HP_start = time(NULL);
         HP_condition = 1;
     }
 
-    if (HP == 100)//ì²´ë ¥ì´ 100ì¼ ë•Œ
+    if (HP == 100)//Ã¼·ÂÀÌ 100ÀÏ ¶§
     {
         HP_condition = 0;
     }
 
-    if (HP_condition == 1)//ì²´ë ¥ ë¦¬ì   ìƒíƒœê°€ 1ì¼ ë•Œ, 1ì´ˆë§ˆë‹¤ ì²´ë ¥ì´ 1ì”© ì¦ê°€í•˜ê³  ì²´ë ¥ ë¦¬ì   ìƒíƒœë¥¼ 0ìœ¼ë¡œ ëŒë¦°ë‹¤.
+    if (HP_condition == 1)//Ã¼·Â ¸®Á¨ »óÅÂ°¡ 1ÀÏ ¶§, 1ÃÊ¸¶´Ù Ã¼·ÂÀÌ 1¾¿ Áõ°¡ÇÏ°í Ã¼·Â ¸®Á¨ »óÅÂ¸¦ 0À¸·Î µ¹¸°´Ù.
     {
         HP_end = time(NULL);
         if ((HP_end - HP_start) == 1)
@@ -1579,54 +1732,92 @@ void sh_HP() //insert
 
 
 /*
-* ì´ë¦„ : sh_Victory(ê²Œìž„ì„±ê³µí•¨ìˆ˜)
-* ê¸°ëŠ¥: ë¬´ê¸° ëž­í¬ë¥¼ 2ë¥¼ ë‹¬ì„±í• ê²½ìš° ëž­í‚¹ì„ ë°˜ì˜ ë° ì¶œë ¥í•˜ê³  í™”ë©´ì„ ì´ˆê¸°í™”í•œ í›„ ê²Œìž„ ìŠ¹ë¦¬ ë¬¸êµ¬ë¥¼ ë„ìš´ë‹¤.
-* ë°›ëŠ” ê°’ : X
-* ë¦¬í„´ ê°’ : X
+* ÀÌ¸§ : sh_Victory(°ÔÀÓ¼º°øÇÔ¼ö)
+* ±â´É: ¹«±â ·©Å©¸¦ 2¸¦ ´Þ¼ºÇÒ°æ¿ì ·©Å·À» ¹Ý¿µ ¹× Ãâ·ÂÇÏ°í È­¸éÀ» ÃÊ±âÈ­ÇÑ ÈÄ °ÔÀÓ ½Â¸® ¹®±¸¸¦ ¶ç¿î´Ù.
+* ¹Þ´Â °ª : X
+* ¸®ÅÏ °ª : X
 */
 void sh_Victory()
 {
     char key;
     if (weapon_rank == 2)
     {
-        //ëž­í¬ì— ê¸°ë¡ ë°˜ì˜
+        //·©Å©¿¡ ±â·Ï ¹Ý¿µ
         insuk_saverank();
 
-        //ëž­í¬ ì¶œë ¥
+        //·©Å© Ãâ·Â
         insuk_rankload();
 
-        //ë¬¸êµ¬ ì¶œë ¥
+        //¹®±¸ Ãâ·Â
         system("cls");
-        printf("ë‹¹ì‹ ì€ ì„±ê³µì ìœ¼ë¡œ ë°±ì‹ ì˜ 2ì°¨ ì ‘ì¢…ì„ ë§žìœ¼ì…¨ìŠµë‹ˆë‹¤.\n");
-        printf("COVID 19ìœ¼ë¡œ ë¶€í„° ì‚´ì•„ë‚¨ìœ¼ì‹œëŠë¼ ê³ ìƒí•˜ì…¨ìŠµë‹ˆë‹¤. ë§ˆìŒ ë†“ê³  ì¼ìƒìƒí™œì„ ì¦ê¸°ì„¸ìš”!\n\n\n");
-        printf("ì•„ë¬´ í‚¤ë‚˜ ëˆ„ë¥´ë©´ ê²Œìž„ì´ ì¢…ë£Œë©ë‹ˆë‹¤.");
+
+        gotoxy(0, 0);//»ó 
+        for (int i = 0; i < 40; i++)
+        {
+            printf("¡à");
+        }
+        gotoxy(0, 24);//ÇÏ
+        for (int i = 0; i < 40; i++)
+        {
+            printf("¡à");
+        }
+
+        for (int i = 1; i < 24; i++)//ÁÂ  
+        {
+            gotoxy(0, i);
+            printf("¡à");
+        }
+        for (int i = 1; i < 24; i++)//¿ì 
+        {
+            gotoxy(78, i);
+            printf("¡à");
+        }
+
+        gotoxy(22, 7);
+        printf("#  #  ##  #   # #### ###     # ####");
+        gotoxy(22, 8);
+        printf("## # #  #  # #   ##  #  #   ## #  #");
+        gotoxy(22, 9);
+        printf("# ## #  #  # #   ##  #  #    # ####");
+        gotoxy(22, 10);
+        printf("#  #  ##    #   #### ###    ###   #");
+        gotoxy(16, 13);
+        printf("´ç½ÅÀº ¼º°øÀûÀ¸·Î ¹é½ÅÀÇ 2Â÷ Á¢Á¾À» ¸ÂÀ¸¼Ì½À´Ï´Ù.");
+        gotoxy(16, 14);
+        printf("COVID 19À¸·Î ºÎÅÍ »ì¾Æ³²À¸½Ã´À¶ó °í»ýÇÏ¼Ì½À´Ï´Ù.");
+        gotoxy(24, 15);
+        printf("¸¶À½ ³õ°í ÀÏ»ó»ýÈ°À» Áñ±â¼¼¿ä!");
+        gotoxy(21, 17);
+
+        printf("¾Æ¹« Å°³ª ´©¸£¸é °ÔÀÓÀÌ Á¾·áµË´Ï´Ù.");
 
         key = getch();
+        gotoxy(0, 26);
         exit(0);
     }
 }
 
 /*
-* ì´ë¦„
-* ê¸°ëŠ¥
-* ë°›ëŠ” ê°’
-* ë¦¬í„´ ê°’
+* ÀÌ¸§
+* ±â´É
+* ¹Þ´Â °ª
+* ¸®ÅÏ °ª
 */
 void sh_monster()//insert
 {
     game_play_time = time(NULL);
-    sh_monster_change(); //ëž­í¬ì— ë”°ë¼ ì²´ë ¥, ê³µê²©ë ¥, ëˆ ë³€í™”.
+    sh_monster_change(); //·©Å©¿¡ µû¶ó Ã¼·Â, °ø°Ý·Â, µ· º¯È­.
     sh_monster_create();
-    sh_monster_move(); //x,yì¢Œí‘œ ìˆ˜ì •.
-    sh_monster_print(); //x, y ì¢Œí‘œì— ë”°ë¼ ëª¬ìŠ¤í„° ì¶œë ¥.
-    sh_monster_HP(); //ëª¬ìŠ¤í„° ì²´ë ¥ sh
+    sh_monster_move(); //x,yÁÂÇ¥ ¼öÁ¤.
+    sh_monster_print(); //x, y ÁÂÇ¥¿¡ µû¶ó ¸ó½ºÅÍ Ãâ·Â.
+    sh_monster_HP(); //¸ó½ºÅÍ Ã¼·Â sh
 }
 
 /*
-* ì´ë¦„ : sh_monster_print()
-* ê¸°ëŠ¥ : ëª¬ìŠ¤í„°ì˜ ì¢Œí‘œë¥¼ ê¸°ì¤€ìœ¼ë¡œ ëª¬ìŠ¤í„°ë¥¼ ì¶œë ¥í•˜ëŠ” í•¨ìˆ˜(ì²´ë ¥ì´ 0 ì´ˆê³¼ì¼ ë•Œë¶€í„° ì¶œë ¥)
-* ë°›ëŠ” ê°’ : X
-* ë¦¬í„´ ê°’ : X
+* ÀÌ¸§ : sh_monster_print()
+* ±â´É : ¸ó½ºÅÍÀÇ ÁÂÇ¥¸¦ ±âÁØÀ¸·Î ¸ó½ºÅÍ¸¦ Ãâ·ÂÇÏ´Â ÇÔ¼ö(Ã¼·ÂÀÌ 0 ÃÊ°úÀÏ ¶§ºÎÅÍ Ãâ·Â)
+* ¹Þ´Â °ª : X
+* ¸®ÅÏ °ª : X
 */
 void sh_monster_print()
 {
@@ -1683,11 +1874,11 @@ void sh_monster_print()
 
 
 /*
-* ì´ë¦„ : sh_monster_move()
-* ê¸°ëŠ¥ : ê²Œìž„ í”Œë ˆì´ íƒ€ìž„ì— ë”°ë¼ ëª¬ìŠ¤í„°ì˜ ê°œì²´ìˆ˜ë¥¼ ìˆ˜ì •, ëª¬ìŠ¤í„°ì˜ ì¢Œí‘œë¥¼ ìˆ˜ì •(ì í”„).
-* ë³€í™”ì‹œí‚¤ëŠ” ê°’ : ì í”„ ìƒíƒœ, ì í”„ ìµœëŒ€ë†’ì´ ë„ë‹¬ ìƒíƒœ, ì í”„ ë°©í–¥, x, y ì¢Œí‘œ ([1][2][3][4][5])
-* ë°›ëŠ” ê°’ : X
-* ë¦¬í„´ ê°’ : X
+* ÀÌ¸§ : sh_monster_move()
+* ±â´É : °ÔÀÓ ÇÃ·¹ÀÌ Å¸ÀÓ¿¡ µû¶ó ¸ó½ºÅÍÀÇ °³Ã¼¼ö¸¦ ¼öÁ¤, ¸ó½ºÅÍÀÇ ÁÂÇ¥¸¦ ¼öÁ¤(Á¡ÇÁ).
+* º¯È­½ÃÅ°´Â °ª : Á¡ÇÁ »óÅÂ, Á¡ÇÁ ÃÖ´ë³ôÀÌ µµ´Þ »óÅÂ, Á¡ÇÁ ¹æÇâ, x, y ÁÂÇ¥ ([1][2][3][4][5])
+* ¹Þ´Â °ª : X
+* ¸®ÅÏ °ª : X
 */
 void sh_monster_move()
 {
@@ -1715,11 +1906,11 @@ void sh_monster_move()
     for (int i = 0; i < monster_time; i++)
     {
 
-        if (monster[4][i] == MONSTER_JUMP_BOUND) //ìµœëŒ€ ë†’ì´ ë„ë‹¬ ì‹œ.
+        if (monster[4][i] == MONSTER_JUMP_BOUND) //ÃÖ´ë ³ôÀÌ µµ´Þ ½Ã.
         {
             monster[1][i] = 1;
         }
-        if (monster[0][i] == 1 && monster[1][i] == 1) //ìµœëŒ€ ë†’ì´ ë„ë‹¬ í›„ ë–¨ì–´ì§ˆ ë•Œ.
+        if (monster[0][i] == 1 && monster[1][i] == 1) //ÃÖ´ë ³ôÀÌ µµ´Þ ÈÄ ¶³¾îÁú ¶§.
         {
             gotoxy(monster[3][i], monster[4][i]);
             printf("   ");
@@ -1728,7 +1919,7 @@ void sh_monster_move()
             gotoxy(monster[3][i], monster[4][i] + 2);
             printf("   ");
 
-            //ë–¨ì–´ì§ˆ ë•Œ ì¢Œí‘œ ë³€ê²½
+            //¶³¾îÁú ¶§ ÁÂÇ¥ º¯°æ
             if (monster_jump_control == MONSTER_JUMP_DEGREE)
             {
                 monster[4][i] += JUMP_GRAVITY;
@@ -1740,14 +1931,14 @@ void sh_monster_move()
             }
         }
 
-        if (monster[4][i] >= DOWN_BOUND - 2)//ë•…ì— ë„ë‹¬ ì‹œ.
+        if (monster[4][i] >= DOWN_BOUND - 2)//¶¥¿¡ µµ´Þ ½Ã.
         {
             monster[4][i] = DOWN_BOUND - 2;
             monster[0][i] = 0;
             monster[1][i] = 0;
         }
 
-        for (long long k = 1; k < 100; k++) //ì í”„ë¥¼ í•˜ë ¤ê³  í•  ë•Œ.
+        for (long long k = 1; k < 100; k++) //Á¡ÇÁ¸¦ ÇÏ·Á°í ÇÒ ¶§.
         {
             if (game_play_time - game_start_time == MONSTER_JUMP_DELAY * k && monster[0][i] == 0)
             {
@@ -1765,7 +1956,7 @@ void sh_monster_move()
             }
         }
 
-        if (monster[0][i] == 1 && monster[1][i] == 0 && monster[2][i] == 0) //ì˜¬ë¼ê°ˆ ë•Œ 
+        if (monster[0][i] == 1 && monster[1][i] == 0 && monster[2][i] == 0) //¿Ã¶ó°¥ ¶§ 
         {
             gotoxy(monster[3][i], monster[4][i]);
             printf("   ");
@@ -1774,13 +1965,13 @@ void sh_monster_move()
             gotoxy(monster[3][i], monster[4][i] + 2);
             printf("   ");
 
-            if (monster_jump_control == MONSTER_JUMP_DEGREE) // ì í”„ ì£¼ê¸° ì¡°ì ˆ
+            if (monster_jump_control == MONSTER_JUMP_DEGREE) // Á¡ÇÁ ÁÖ±â Á¶Àý
             {
-                if (monster[3][i] != (RIGHT_BOUND - 3)) // ì˜¤ë¥¸ìª½ ë²½ì— ë§‰ížˆì§€ ì•Šì„ ê²½ìš°
+                if (monster[3][i] != (RIGHT_BOUND - 3)) // ¿À¸¥ÂÊ º®¿¡ ¸·È÷Áö ¾ÊÀ» °æ¿ì
                 {
-                    monster[3][i] += JUMP_GRAVITY;//ì˜¤ë¥¸ìª½
+                    monster[3][i] += JUMP_GRAVITY;//¿À¸¥ÂÊ
                 }
-                monster[4][i] -= JUMP_GRAVITY;//ì í”„
+                monster[4][i] -= JUMP_GRAVITY;//Á¡ÇÁ
                 monster_jump_control = 0;
             }
             else
@@ -1793,7 +1984,7 @@ void sh_monster_move()
             monster[1][i] = 1;
         }
 
-        if (monster[0][i] == 1 && monster[1][i] == 0 && monster[2][i] == 1) //ì˜¬ë¼ê°ˆ ë•Œ 
+        if (monster[0][i] == 1 && monster[1][i] == 0 && monster[2][i] == 1) //¿Ã¶ó°¥ ¶§ 
         {
             gotoxy(monster[3][i], monster[4][i]);
             printf("   ");
@@ -1802,13 +1993,13 @@ void sh_monster_move()
             gotoxy(monster[3][i], monster[4][i] + 2);
             printf("   ");
 
-            if (monster_jump_control == MONSTER_JUMP_DEGREE) //ì í”„ ì£¼ê¸° ì¡°ì ˆ
+            if (monster_jump_control == MONSTER_JUMP_DEGREE) //Á¡ÇÁ ÁÖ±â Á¶Àý
             {
-                if (monster[3][i] != LEFT_BOUND)//ì™¼ìª½ ë²½ì— ë§‰ížˆì§€ ì•Šì„ ê²½ìš°.
+                if (monster[3][i] != LEFT_BOUND)//¿ÞÂÊ º®¿¡ ¸·È÷Áö ¾ÊÀ» °æ¿ì.
                 {
-                    monster[3][i] -= JUMP_GRAVITY;//ì™¼ìª½
+                    monster[3][i] -= JUMP_GRAVITY;//¿ÞÂÊ
                 }
-                monster[4][i] -= JUMP_GRAVITY;//ì í”„
+                monster[4][i] -= JUMP_GRAVITY;//Á¡ÇÁ
                 monster_jump_control = 0;
             }
             else
@@ -1824,33 +2015,19 @@ void sh_monster_move()
 }
 
 /*
-* ì´ë¦„ : sh_monster_change
-* ê¸°ëŠ¥ : ëª¬ìŠ¤í„°ë¥¼ ì‹œê°„ì— ë”°ë¼ ë³€í™”ì‹œí‚¤ëŠ” í•¨ìˆ˜. ì‹œê°„ì´ ë˜ë©´ ëª¬ìŠ¤í„°ë¥¼ ëª¨ë‘ ì‚­ì œì‹œí‚´.
-* ë³€í™” ì‹œí‚¤ëŠ” ê°’ :  ëˆ, ë°ë¯¸ì§€, ëž­í¬, ì²´ë ¥ ([5][6][7][8])
-* ë°›ëŠ” ê°’ : X
-* ë¦¬í„´ ê°’ : X
+* ÀÌ¸§ : sh_monster_change
+* ±â´É : ¸ó½ºÅÍ¸¦ ½Ã°£¿¡ µû¶ó º¯È­½ÃÅ°´Â ÇÔ¼ö. ½Ã°£ÀÌ µÇ¸é ¸ó½ºÅÍ¸¦ ¸ðµÎ »èÁ¦½ÃÅ´.
+* º¯È­ ½ÃÅ°´Â °ª :  µ·, µ¥¹ÌÁö, ·©Å©, Ã¼·Â ([5][6][7][8])
+* ¹Þ´Â °ª : X
+* ¸®ÅÏ °ª : X
 */
 
 void sh_monster_change()
 {
 
-    //1ë¶„ë§ˆë‹¤ ëª¬ìŠ¤í„°ì˜ ëž­í¬ ë³€í™”.
+    //1ºÐ¸¶´Ù ¸ó½ºÅÍÀÇ ·©Å© º¯È­.
     if (game_play_time - game_start_time == 60)
     {
-        gotoxy(3, 2);
-        printf("ë°”ì´ëŸ¬ìŠ¤ì—ê²Œ ì•ŒíŒŒ ë³€ì´ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤! ê°•í•´ì§„ ë°”ì´ëŸ¬ìŠ¤ì— ëŒ€ë¹„í•˜ì„¸ìš”!");
-        gotoxy(3, 3);
-        printf("që¥¼ ëˆŒë ¤ ê²Œìž„ìœ¼ë¡œ ëŒì•„ê°€ì„¸ìš”.");
-        while (1)
-        {
-            char trash_l = getch();
-            if (trash_l == 'q')
-            {
-                system("cls");
-                break;
-
-            }
-        }
         for (int i = 0; i < 15; i++)
         {
             monster[8][i] = MONSTER_SECOND_RANK;
@@ -1859,19 +2036,6 @@ void sh_monster_change()
     }
     if (game_play_time - game_start_time == 120)
     {
-        gotoxy(3, 2);
-        printf("ë°”ì´ëŸ¬ìŠ¤ì—ê²Œ ë² íƒ€ ë³€ì´ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤! ê°•í•´ì§„ ë°”ì´ëŸ¬ìŠ¤ì— ëŒ€ë¹„í•˜ì„¸ìš”!");
-        gotoxy(3, 3);
-        printf("që¥¼ ëˆŒë ¤ ê²Œìž„ìœ¼ë¡œ ëŒì•„ê°€ì„¸ìš”.");
-        while (1)
-        {
-            char trash_l = getch();
-            if (trash_l == 'q')
-            {
-                system("cls");
-                break;
-            }
-        }
         for (int i = 0; i < 15; i++)
         {
             monster[8][i] = MONSTER_THIRD_RANK;
@@ -1880,19 +2044,6 @@ void sh_monster_change()
     }
     if (game_play_time - game_start_time == 180)
     {
-        gotoxy(3, 2);
-        printf("ë°”ì´ëŸ¬ìŠ¤ì—ê²Œ ê°ë§ˆ ë³€ì´ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤! ê°•í•´ì§„ ë°”ì´ëŸ¬ìŠ¤ì— ëŒ€ë¹„í•˜ì„¸ìš”!");
-        gotoxy(3, 3);
-        printf("që¥¼ ëˆŒë ¤ ê²Œìž„ìœ¼ë¡œ ëŒì•„ê°€ì„¸ìš”.");
-        while (1)
-        {
-            char trash_l = getch();
-            if (trash_l == 'q')
-            {
-                system("cls");
-                break;
-            }
-        }
         for (int i = 0; i < 15; i++)
         {
             monster[8][i] = MONSTER_FOURTH_RANK;
@@ -1901,19 +2052,6 @@ void sh_monster_change()
     }
     if (game_play_time - game_start_time == 240)
     {
-        gotoxy(3, 2);
-        printf("ë°”ì´ëŸ¬ìŠ¤ì—ê²Œ ë¸íƒ€ ë³€ì´ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤! ê°•í•´ì§„ ë°”ì´ëŸ¬ìŠ¤ì— ëŒ€ë¹„í•˜ì„¸ìš”!");
-        gotoxy(3, 3);
-        printf("që¥¼ ëˆŒë ¤ ê²Œìž„ìœ¼ë¡œ ëŒì•„ê°€ì„¸ìš”.");
-        while (1)
-        {
-            char trash_l = getch();
-            if (trash_l == 'q')
-            {
-                system("cls");
-                break;
-            }
-        }
         for (int i = 0; i < 15; i++)
         {
             monster[8][i] = MONSTER_FIFTH_RANK;
@@ -1922,7 +2060,7 @@ void sh_monster_change()
     }
 
 
-    //ëª¬ìŠ¤í„°ì˜ ëž­í¬ì— ë”°ë¼ ì„¤ì •ê°’ë“¤ ë³€í™”.
+    //¸ó½ºÅÍÀÇ ·©Å©¿¡ µû¶ó ¼³Á¤°ªµé º¯È­.
     for (int i = 0; i < 15; i++)
     {
         if (monster[8][i] == MONSTER_SECOND_RANK)
@@ -1949,19 +2087,19 @@ void sh_monster_change()
 }
 
 /*
-* ì´ë¦„ : sh_monster_create()
-* ê¸°ëŠ¥ : ëª¬ìŠ¤í„°ë¥¼ ì‹œê°„ëŒ€ë§ˆë‹¤ ìƒì„±í•˜ê³  ì„¤ì •í•¨.
-* ì„¤ì • ëª©ë¡ : ì í”„ ìƒíƒœ, ìµœëŒ€ë†’ì´ ë„ë‹¬ ìƒíƒœ, ì í”„ ë°©í–¥, ì²´ë ¥, (x, y ì¢Œí‘œ) ([0][1][2][3][4][5])
-* ë°›ëŠ” ê°’ : X
-* ë¦¬í„´ ê°’ : X
+* ÀÌ¸§ : sh_monster_create()
+* ±â´É : ¸ó½ºÅÍ¸¦ ½Ã°£´ë¸¶´Ù »ý¼ºÇÏ°í ¼³Á¤ÇÔ.
+* ¼³Á¤ ¸ñ·Ï : Á¡ÇÁ »óÅÂ, ÃÖ´ë³ôÀÌ µµ´Þ »óÅÂ, Á¡ÇÁ ¹æÇâ, Ã¼·Â, (x, y ÁÂÇ¥) ([0][1][2][3][4][5])
+* ¹Þ´Â °ª : X
+* ¸®ÅÏ °ª : X
 */
 
 void sh_monster_create() //insert
 {
-    int j, k = 0; //forë¬¸ì„ ìœ„í•œ ì§€ì—­ë³€ìˆ˜ ì„¤ì •
+    int j, k = 0; //for¹®À» À§ÇÑ Áö¿ªº¯¼ö ¼³Á¤
     for (k = 0; k < 10; k++)
     {
-        if (game_play_time - game_start_time == 30 * k) //0ì´ˆ, 30ì´ˆë§ˆë‹¤ ì§€ì •.(x, y ì¢Œí‘œë¥¼ ì„¤ì •)
+        if (game_play_time - game_start_time == 30 * k) //0ÃÊ, 30ÃÊ¸¶´Ù ÁöÁ¤.(x, y ÁÂÇ¥¸¦ ¼³Á¤)
         {
 
             for (j = 0; j < 3; j++)
@@ -1972,9 +2110,9 @@ void sh_monster_create() //insert
                 printf("   ");
                 gotoxy(monster[3][j], monster[4][j] + 2);
                 printf("   ");
-                monster[0][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìƒíƒœ ì§€ì •.[0]
-                monster[1][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìµœëŒ€ë†’ì´ ë„ë‹¬ ì§€ì •.[1]
-                monster[2][j] = 0;//ëª¬ìŠ¤í„° ì í”„ ë°©í–¥ ì§€ì •.[2]
+                monster[0][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ »óÅÂ ÁöÁ¤.[0]
+                monster[1][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ ÃÖ´ë³ôÀÌ µµ´Þ ÁöÁ¤.[1]
+                monster[2][j] = 0;//¸ó½ºÅÍ Á¡ÇÁ ¹æÇâ ÁöÁ¤.[2]
                 monster[4][j] = MONSTER_Y_POSITION;
                 if (monster[8][j] == 0)
                 {
@@ -1996,7 +2134,7 @@ void sh_monster_create() //insert
                 {
                     monster[5][j] = MONSTER_FIFTH_HP;
                 }
-                
+
 
             }
             monster[3][0] = MONSTER_FIRST_X_POSITION;
@@ -2004,7 +2142,7 @@ void sh_monster_create() //insert
             monster[3][2] = MONSTER_THIRD_X_POSITION;
 
         }
-        if (game_play_time - game_start_time == 6 + 30 * k) //6ì´ˆ, 36ì´ˆë§ˆë‹¤ ìƒì„±
+        if (game_play_time - game_start_time == 6 + 30 * k) //6ÃÊ, 36ÃÊ¸¶´Ù »ý¼º
         {
             for (j = 3; j < 6; j++)
             {
@@ -2014,9 +2152,9 @@ void sh_monster_create() //insert
                 printf("   ");
                 gotoxy(monster[3][j], monster[4][j] + 2);
                 printf("   ");
-                monster[0][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìƒíƒœ ì§€ì •.[0]
-                monster[1][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìµœëŒ€ë†’ì´ ë„ë‹¬ ì§€ì •.[1]
-                monster[2][j] = 0;//ëª¬ìŠ¤í„° ì í”„ ë°©í–¥ ì§€ì •.[2]
+                monster[0][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ »óÅÂ ÁöÁ¤.[0]
+                monster[1][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ ÃÖ´ë³ôÀÌ µµ´Þ ÁöÁ¤.[1]
+                monster[2][j] = 0;//¸ó½ºÅÍ Á¡ÇÁ ¹æÇâ ÁöÁ¤.[2]
                 monster[4][j] = MONSTER_Y_POSITION;
                 if (monster[8][j] == 0)
                 {
@@ -2043,7 +2181,7 @@ void sh_monster_create() //insert
             monster[3][4] = MONSTER_SECOND_X_POSITION;
             monster[3][5] = MONSTER_THIRD_X_POSITION;
         }
-        if (game_play_time - game_start_time == 12 + 30 * k) //12ì´ˆ, 42ì´ˆë§ˆë‹¤ ìƒì„±
+        if (game_play_time - game_start_time == 12 + 30 * k) //12ÃÊ, 42ÃÊ¸¶´Ù »ý¼º
         {
             for (j = 6; j < 9; j++)
             {
@@ -2053,9 +2191,9 @@ void sh_monster_create() //insert
                 printf("   ");
                 gotoxy(monster[3][j], monster[4][j] + 2);
                 printf("   ");
-                monster[0][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìƒíƒœ ì§€ì •.[0]
-                monster[1][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìµœëŒ€ë†’ì´ ë„ë‹¬ ì§€ì •.[1]
-                monster[2][j] = 0;//ëª¬ìŠ¤í„° ì í”„ ë°©í–¥ ì§€ì •.[2]
+                monster[0][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ »óÅÂ ÁöÁ¤.[0]
+                monster[1][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ ÃÖ´ë³ôÀÌ µµ´Þ ÁöÁ¤.[1]
+                monster[2][j] = 0;//¸ó½ºÅÍ Á¡ÇÁ ¹æÇâ ÁöÁ¤.[2]
                 monster[4][j] = MONSTER_Y_POSITION;
                 if (monster[8][j] == 0)
                 {
@@ -2082,7 +2220,7 @@ void sh_monster_create() //insert
             monster[3][7] = MONSTER_SECOND_X_POSITION;
             monster[3][8] = MONSTER_THIRD_X_POSITION;
         }
-        if (game_play_time - game_start_time == 18 + 30 * k) //18ì´ˆ, 48ì´ˆë§ˆë‹¤ ìƒì„±
+        if (game_play_time - game_start_time == 18 + 30 * k) //18ÃÊ, 48ÃÊ¸¶´Ù »ý¼º
         {
             for (j = 9; j < 12; j++)
             {
@@ -2092,9 +2230,9 @@ void sh_monster_create() //insert
                 printf("   ");
                 gotoxy(monster[3][j], monster[4][j] + 2);
                 printf("   ");
-                monster[0][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìƒíƒœ ì§€ì •.[0]
-                monster[1][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìµœëŒ€ë†’ì´ ë„ë‹¬ ì§€ì •.[1]
-                monster[2][j] = 0;//ëª¬ìŠ¤í„° ì í”„ ë°©í–¥ ì§€ì •.[2]
+                monster[0][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ »óÅÂ ÁöÁ¤.[0]
+                monster[1][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ ÃÖ´ë³ôÀÌ µµ´Þ ÁöÁ¤.[1]
+                monster[2][j] = 0;//¸ó½ºÅÍ Á¡ÇÁ ¹æÇâ ÁöÁ¤.[2]
                 monster[4][j] = MONSTER_Y_POSITION;
                 if (monster[8][j] == 0)
                 {
@@ -2121,7 +2259,7 @@ void sh_monster_create() //insert
             monster[3][10] = MONSTER_SECOND_X_POSITION;
             monster[3][11] = MONSTER_THIRD_X_POSITION;
         }
-        if (game_play_time - game_start_time == 24 + 30 * k) //24ì´ˆ, 54ì´ˆë§ˆë‹¤ ìƒì„±
+        if (game_play_time - game_start_time == 24 + 30 * k) //24ÃÊ, 54ÃÊ¸¶´Ù »ý¼º
         {
             for (j = 12; j < 15; j++)
             {
@@ -2131,9 +2269,9 @@ void sh_monster_create() //insert
                 printf("   ");
                 gotoxy(monster[3][j], monster[4][j] + 2);
                 printf("   ");
-                monster[0][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìƒíƒœ ì§€ì •.[0]
-                monster[1][j] = 1;//ëª¬ìŠ¤í„° ì í”„ ìµœëŒ€ë†’ì´ ë„ë‹¬ ì§€ì •.[1]
-                monster[2][j] = 0;//ëª¬ìŠ¤í„° ì í”„ ë°©í–¥ ì§€ì •.[2]
+                monster[0][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ »óÅÂ ÁöÁ¤.[0]
+                monster[1][j] = 1;//¸ó½ºÅÍ Á¡ÇÁ ÃÖ´ë³ôÀÌ µµ´Þ ÁöÁ¤.[1]
+                monster[2][j] = 0;//¸ó½ºÅÍ Á¡ÇÁ ¹æÇâ ÁöÁ¤.[2]
                 monster[4][j] = MONSTER_Y_POSITION;
                 if (monster[8][j] == 0)
                 {
@@ -2164,10 +2302,10 @@ void sh_monster_create() //insert
 }
 
 /*
-* ì´ë¦„ : sh_monster_HP
-* ê¸°ëŠ¥ : ëª¬ìŠ¤í„°ì˜ ì²´ë ¥ì´ 0ì´ ë  ê²½ìš° í”Œë ˆì´ì–´ì—ê²Œ ëˆì„ ì¦ê°€ì‹œí‚¤ê³  ëª¬ìŠ¤í„°ì˜ í˜•íƒœê°€ ì‚¬ë¼ì§€ê²Œí•¨.
-* ë°›ëŠ” ê°’ : X
-* ë¦¬í„´ ê°’ : X
+* ÀÌ¸§ : sh_monster_HP
+* ±â´É : ¸ó½ºÅÍÀÇ Ã¼·ÂÀÌ 0ÀÌ µÉ °æ¿ì ÇÃ·¹ÀÌ¾î¿¡°Ô µ·À» Áõ°¡½ÃÅ°°í ¸ó½ºÅÍÀÇ ÇüÅÂ°¡ »ç¶óÁö°ÔÇÔ.
+* ¹Þ´Â °ª : X
+* ¸®ÅÏ °ª : X
 */
 
 void sh_monster_HP() //insert
@@ -2177,7 +2315,7 @@ void sh_monster_HP() //insert
     {
         if (monster[5][i] == 0 && k == 0)
         {
-            money = money + monster[6][i]; //ëˆ ì¶”ê°€.
+            money = money + monster[6][i]; //µ· Ãß°¡.
             k = 1;
             monster[5][i] = -1;
             gotoxy(monster[3][i], monster[4][i]);
@@ -2199,14 +2337,14 @@ void sh_monster_HP() //insert
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 */
-//ê¸°íƒ€ í•¨ìˆ˜ë“¤.
+//±âÅ¸ ÇÔ¼öµé.
 
 
 /*
-* ì´ë¦„:gotoxy() í•¨ìˆ˜.
-* ê¸°ëŠ¥: ì¸ìžì— ìž‘ì„±í•œ ì¢Œí‘œë¡œ ì»¤ì„œë¥¼ ì´ë™ì‹œí‚¨ë‹¤.
-* ë°›ëŠ”ê°’: ì´ë™í•  xì¢Œí‘œ, ì´ë™í•  yì¢Œí‘œ.
-* ë¦¬í„´ê°’: (ì‚¬ìš©í•˜ì§€ ì•ŠëŠ”ë‹¤.)
+* ÀÌ¸§:gotoxy() ÇÔ¼ö.
+* ±â´É: ÀÎÀÚ¿¡ ÀÛ¼ºÇÑ ÁÂÇ¥·Î Ä¿¼­¸¦ ÀÌµ¿½ÃÅ²´Ù.
+* ¹Þ´Â°ª: ÀÌµ¿ÇÒ xÁÂÇ¥, ÀÌµ¿ÇÒ yÁÂÇ¥.
+* ¸®ÅÏ°ª: (»ç¿ëÇÏÁö ¾Ê´Â´Ù.)
 */
 void gotoxy(int x, int y)
 {
@@ -2214,21 +2352,12 @@ void gotoxy(int x, int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
 }
 
-
-//////////////ê¹€í™˜í¬////////////////////
-
-int a;
-
-long long c_runstart, m_runstart, c_runstop, m_runstop;
-#define JUDGETIME 1 //--->ìºë¦­í„° ì²´ë ¥ê¹Žì¼ë•Œ ë¬´ì ì¸ ì‹œê°„ 1ì´ˆ
-#define M_JUDGETIME 0.0005 //--->ëª¬ìŠ¤í„° ì²´ë ¥ê¹Žì¼ë•Œ ë¬´ì ì¸ ì‹œê°„ 1ì´ˆ
-
-/*
-* ì´ë¦„: hh_DamageJudge
-* ê¸°ëŠ¥: ëª¬ìŠ¤í„°ì™€ ìºë¦­í„°ì˜ ì¶©ëŒì„ íŒë‹¨ í›„, ë§Œì•½ ì¶©ëŒ í–ˆë‹¤ë©´ ìºë¦­í„° ì²´ë ¥ ê°ì†Œ(hh_HPdecrease) í•¨ìˆ˜ ë¶ˆëŸ¬ì˜´
-* ë°›ëŠ”ê°’: ëª¬ìŠ¤í„°ì˜ x,yì¢Œí‘œ
-* ë¦¬í„´ê°’: x
-*/
+    /*
+    * ÀÌ¸§: hh_DamageJudge
+    * ±â´É: ¸ó½ºÅÍ¿Í Ä³¸¯ÅÍÀÇ Ãæµ¹À» ÆÇ´Ü ÈÄ, ¸¸¾à Ãæµ¹ Çß´Ù¸é Ä³¸¯ÅÍ Ã¼·Â °¨¼Ò(hh_HPdecrease) ÇÔ¼ö ºÒ·¯¿È
+    * ¹Þ´Â°ª: ¸ó½ºÅÍÀÇ x,yÁÂÇ¥
+    * ¸®ÅÏ°ª: x
+    */
 void hh_DamageJudge(int MX, int MY)
 {
     //c_runstart = time(NULL);
@@ -2249,10 +2378,10 @@ void hh_DamageJudge(int MX, int MY)
 
 
 /*
-* ì´ë¦„: hh_RightAttackJudge
-* ê¸°ëŠ¥: ìºë¦­í„°ê°€ "ì˜¤ë¥¸ìª½" ë°©í–¥ì¼ë•Œ.. ëª¬ìŠ¤í„°ì™€ ìºë¦­í„°ì˜ ì¶©ëŒì„ íŒë‹¨í•œ í›„, ë§Œì•½ ì¶©ëŒ í–ˆë‹¤ë©´ ê³µê²©ë°ë¯¸ì§€í•¨ìˆ˜(hh_AttackDamage) ë¶ˆëŸ¬ì˜´
-* ë°›ëŠ”ê°’: ëª¬ìŠ¤í„°ì˜ x,y ì¢Œí‘œ
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: hh_RightAttackJudge
+* ±â´É: Ä³¸¯ÅÍ°¡ "¿À¸¥ÂÊ" ¹æÇâÀÏ¶§.. ¸ó½ºÅÍ¿Í Ä³¸¯ÅÍÀÇ Ãæµ¹À» ÆÇ´ÜÇÑ ÈÄ, ¸¸¾à Ãæµ¹ Çß´Ù¸é °ø°Ýµ¥¹ÌÁöÇÔ¼ö(hh_AttackDamage) ºÒ·¯¿È
+* ¹Þ´Â°ª: ¸ó½ºÅÍÀÇ x,y ÁÂÇ¥
+* ¸®ÅÏ°ª: X
 */
 void hh_RightAttackJudge(int MX, int MY)
 {
@@ -2262,7 +2391,7 @@ void hh_RightAttackJudge(int MX, int MY)
         {
             switch (weapon_kind)
             {
-            case 0: //ê¸°ë³¸ì£¼ì‚¬ê¸° ê³µê²© íŒì •
+            case 0: //±âº»ÁÖ»ç±â °ø°Ý ÆÇÁ¤
                 if (((x + 4) <= MX && MX < (x + 8)) || ((x + 4) < (MX + 3) && (MX + 3) <= (x + 8)))
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
@@ -2271,7 +2400,7 @@ void hh_RightAttackJudge(int MX, int MY)
                     }
                 }
                 break;
-            case 1: //AZì£¼ì‚¬ê¸° ê³µê²© íŒì •
+            case 1: //AZÁÖ»ç±â °ø°Ý ÆÇÁ¤
                 if (((x + 4) <= MX && MX < (x + 9)) || ((x + 4) < (MX + 3) && (MX + 3) <= (x + 9)))
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
@@ -2280,7 +2409,7 @@ void hh_RightAttackJudge(int MX, int MY)
                     }
                 }
                 break;
-            case 2: //Mì£¼ì‚¬ê¸° ê³µê²© íŒì •
+            case 2: //MÁÖ»ç±â °ø°Ý ÆÇÁ¤
                 if (((x + 4) <= MX && MX < (x + 10)) || ((x + 4) < (MX + 3) && (MX + 3) <= (x + 10)))
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
@@ -2289,7 +2418,7 @@ void hh_RightAttackJudge(int MX, int MY)
                     }
                 }
                 break;
-            case 3: //Pì£¼ì‚¬ê¸° ê³µê²© íŒì •
+            case 3: //PÁÖ»ç±â °ø°Ý ÆÇÁ¤
                 if (((x + 4) <= MX && MX < (x + 11)) || ((x + 4) < (MX + 3) && (MX + 3) <= (x + 11)))
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
@@ -2303,10 +2432,10 @@ void hh_RightAttackJudge(int MX, int MY)
     }
 }
 /*
-* ì´ë¦„: hh_LeftAttackJudge
-* ê¸°ëŠ¥: ìºë¦­í„°ê°€ "ì™¼ìª½" ë°©í–¥ì¼ë•Œ.. ëª¬ìŠ¤í„°ì™€ ìºë¦­í„°ì˜ ì¶©ëŒì„ íŒë‹¨í•œ í›„, ë§Œì•½ ì¶©ëŒ í–ˆë‹¤ë©´ ê³µê²©ë°ë¯¸ì§€í•¨ìˆ˜(hh_AttackDamage) ë¶ˆëŸ¬ì˜´
-* ë°›ëŠ”ê°’: ëª¬ìŠ¤í„°ì˜ x,y ì¢Œí‘œ
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: hh_LeftAttackJudge
+* ±â´É: Ä³¸¯ÅÍ°¡ "¿ÞÂÊ" ¹æÇâÀÏ¶§.. ¸ó½ºÅÍ¿Í Ä³¸¯ÅÍÀÇ Ãæµ¹À» ÆÇ´ÜÇÑ ÈÄ, ¸¸¾à Ãæµ¹ Çß´Ù¸é °ø°Ýµ¥¹ÌÁöÇÔ¼ö(hh_AttackDamage) ºÒ·¯¿È
+* ¹Þ´Â°ª: ¸ó½ºÅÍÀÇ x,y ÁÂÇ¥
+* ¸®ÅÏ°ª: X
 */
 void hh_LeftAttackJudge(int MX, int MY)
 {
@@ -2317,7 +2446,7 @@ void hh_LeftAttackJudge(int MX, int MY)
             switch (weapon_kind)
             {
 
-            case 0: //ê¸°ë³¸ì£¼ì‚¬ê¸° ê³µê²© íŒì •
+            case 0: //±âº»ÁÖ»ç±â °ø°Ý ÆÇÁ¤
                 if (((x - 4) <= MX && MX < x) || ((x - 4) < (MX + 3) && (MX + 3) <= x))
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
@@ -2326,7 +2455,7 @@ void hh_LeftAttackJudge(int MX, int MY)
                     }
                 }
                 break;
-            case 1: //AZì£¼ì‚¬ê¸° ê³µê²© íŒì •
+            case 1: //AZÁÖ»ç±â °ø°Ý ÆÇÁ¤
                 if (((x - 5) <= MX && MX < x) || ((x - 5) < (MX + 3) && (MX + 3) <= x))
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
@@ -2335,7 +2464,7 @@ void hh_LeftAttackJudge(int MX, int MY)
                     }
                 }
                 break;
-            case 2: //Mì£¼ì‚¬ê¸° ê³µê²© íŒì •
+            case 2: //MÁÖ»ç±â °ø°Ý ÆÇÁ¤
                 if (((x - 6) <= MX && MX < x) || ((x - 6) < (MX + 3) && (MX + 3) <= x))
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
@@ -2344,7 +2473,7 @@ void hh_LeftAttackJudge(int MX, int MY)
                     }
                 }
                 break;
-            case 3: //Pì£¼ì‚¬ê¸° ê³µê²© íŒì •
+            case 3: //PÁÖ»ç±â °ø°Ý ÆÇÁ¤
                 if (((x - 7) <= MX && MX < x) || ((x - 7) < (MX + 3) && (MX + 3) <= x))
                 {
                     if ((MY <= (y + 1) && (y + 1) < (MY + 3)) || (MY < (y + 2) && (y + 2) <= (MY + 3)))
@@ -2358,10 +2487,10 @@ void hh_LeftAttackJudge(int MX, int MY)
     }
 }
 /*
-* ì´ë¦„: hh_HPdecrease
-* ê¸°ëŠ¥: ìºë¦­í„°ì˜ ì²´ë ¥ì„ ê°ì†Œì‹œí‚¤ëŠ” í•¨ìˆ˜
-* ë°›ëŠ”ê°’: ëª¬ìŠ¤í„°ì˜ ì¢…ë¥˜ ë³€ìˆ˜
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: hh_HPdecrease
+* ±â´É: Ä³¸¯ÅÍÀÇ Ã¼·ÂÀ» °¨¼Ò½ÃÅ°´Â ÇÔ¼ö
+* ¹Þ´Â°ª: ¸ó½ºÅÍÀÇ Á¾·ù º¯¼ö
+* ¸®ÅÏ°ª: X
 */
 void hh_HPdecrease(int m)//monster[8][?]
 {
@@ -2369,19 +2498,19 @@ void hh_HPdecrease(int m)//monster[8][?]
     monster[9][a] = 1;
     switch (m)
     {
-    case 0: //ê¸°ë³¸
+    case 0: //±âº»
         HP -= 9;
         break;
-    case 1: //ì•ŒíŒŒ
+    case 1: //¾ËÆÄ
         HP -= 12;
         break;
-    case 2: //ë² íƒ€
+    case 2: //º£Å¸
         HP -= 15;
         break;
-    case 3: //ê°ë§ˆ
+    case 3: //°¨¸¶
         HP -= 18;
         break;
-    case 4: //ë¸íƒ€
+    case 4: //µ¨Å¸
         HP -= 21;
         break;
     }
@@ -2389,16 +2518,16 @@ void hh_HPdecrease(int m)//monster[8][?]
 }
 
 /*
-* ì´ë¦„: hh_AttackDamage
-* ê¸°ëŠ¥: ëª¬ìŠ¤í„°ì˜ ì²´ë ¥ì„ ê°ì†Œì‹œí‚¤ëŠ” í•¨ìˆ˜
-* ë°›ëŠ”ê°’: ëª¬ìŠ¤í„°ì˜ ì¢…ë¥˜ ë³€ìˆ˜
-* ë¦¬í„´ê°’: X
+* ÀÌ¸§: hh_AttackDamage
+* ±â´É: ¸ó½ºÅÍÀÇ Ã¼·ÂÀ» °¨¼Ò½ÃÅ°´Â ÇÔ¼ö
+* ¹Þ´Â°ª: ¸ó½ºÅÍÀÇ Á¾·ù º¯¼ö
+* ¸®ÅÏ°ª: X
 */
-void hh_AttackDamage(int m)// -->mì€ í•œ ê°œì²´ì˜ ì²´ë ¥ monster[5][?]
+void hh_AttackDamage(int m)// -->mÀº ÇÑ °³Ã¼ÀÇ Ã¼·Â monster[5][?]
 {
     switch (weapon_kind)
     {
-    case 0: //ê¸°ë³¸
+    case 0: //±âº»
         monster[5][a] -= 1;
         break;
     case 1: //AZ
@@ -2414,10 +2543,10 @@ void hh_AttackDamage(int m)// -->mì€ í•œ ê°œì²´ì˜ ì²´ë ¥ monster[5][?]
     m_runstop = time(NULL);
 }
 /*
-* ì´ë¦„: hh_runí•¨ìˆ˜ (ê°œì²´ì¶œë ¥í•¨ìˆ˜)
-* ê¸°ëŠ¥: ì¼ë‹¨ ì´ë™ë°©í–¥ ì¼€ì´ìŠ¤ë¥¼ ë‚˜ëˆ´ìŒ
-* ë°›ëŠ”ê°’: x
-* ë¦¬í„´ê°’:
+* ÀÌ¸§: hh_runÇÔ¼ö (°³Ã¼Ãâ·ÂÇÔ¼ö)
+* ±â´É: ÀÏ´Ü ÀÌµ¿¹æÇâ ÄÉÀÌ½º¸¦ ³ª´³À½
+* ¹Þ´Â°ª: x
+* ¸®ÅÏ°ª:
 */
 void hh_run(void)
 {
@@ -2428,14 +2557,14 @@ void hh_run(void)
 
         if (char_side == 0)
         {
-            for (a = 0; a < monster_time; a++) //-->ëª¬ìŠ¤í„° 15ë§ˆë¦¬ìˆ˜ ë‹¬ë¼ì§ˆìˆ˜ìžˆìŒ ë§¤í¬ë¡œì‚¬ìš©ì˜ˆì •
+            for (a = 0; a < monster_time; a++) //-->¸ó½ºÅÍ 15¸¶¸®¼ö ´Þ¶óÁú¼öÀÖÀ½ ¸ÅÅ©·Î»ç¿ë¿¹Á¤
             {
                 hh_DamageJudge(monster[3][a], monster[4][a]);
             }
         }
         else if (char_side == 1)
         {
-            for (a = 0; a < monster_time; a++) //-->ëª¬ìŠ¤í„° 15ë§ˆë¦¬ìˆ˜ ë‹¬ë¼ì§ˆìˆ˜ìžˆìŒ ë§¤í¬ë¡œì‚¬ìš©ì˜ˆì •
+            for (a = 0; a < monster_time; a++) //-->¸ó½ºÅÍ 15¸¶¸®¼ö ´Þ¶óÁú¼öÀÖÀ½ ¸ÅÅ©·Î»ç¿ë¿¹Á¤
             {
                 hh_DamageJudge(monster[3][a], monster[4][a]);
             }
@@ -2447,7 +2576,7 @@ void hh_run(void)
 
         if (char_side == 0)
         {
-            for (a = 0; a < monster_time; a++) //-->ëª¬ìŠ¤í„° 15ë§ˆë¦¬ìˆ˜ ë‹¬ë¼ì§ˆìˆ˜ìžˆìŒ ë§¤í¬ë¡œì‚¬ìš©ì˜ˆì •
+            for (a = 0; a < monster_time; a++) //-->¸ó½ºÅÍ 15¸¶¸®¼ö ´Þ¶óÁú¼öÀÖÀ½ ¸ÅÅ©·Î»ç¿ë¿¹Á¤
             {
                 hh_DamageJudge(monster[3][a], monster[4][a]);
                 hh_RightAttackJudge(monster[3][a], monster[4][a]);
@@ -2455,7 +2584,7 @@ void hh_run(void)
         }
         else if (char_side == 1)
         {
-            for (a = 0; a < monster_time; a++) //-->ëª¬ìŠ¤í„° 15ë§ˆë¦¬ìˆ˜ ë‹¬ë¼ì§ˆìˆ˜ìžˆìŒ ë§¤í¬ë¡œì‚¬ìš©ì˜ˆì •
+            for (a = 0; a < monster_time; a++) //-->¸ó½ºÅÍ 15¸¶¸®¼ö ´Þ¶óÁú¼öÀÖÀ½ ¸ÅÅ©·Î»ç¿ë¿¹Á¤
             {
                 hh_DamageJudge(monster[3][a], monster[4][a]);
                 hh_LeftAttackJudge(monster[3][a], monster[4][a]);
