@@ -424,15 +424,66 @@ char insuk_option(void)
 */
 void insuk_help(void)
 {
-    char exit;
     system("cls");
+
+    gotoxy(0, 0);//상 
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+    gotoxy(0, 24);//하
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+
+    for (int i = 1; i < 24; i++)//좌  
+    {
+        gotoxy(0, i);
+        printf("□");
+    }
+    for (int i = 1; i < 24; i++)//우 
+    {
+        gotoxy(78, i);
+        printf("□");
+    }
+    gotoxy(22, 4);
+    printf("#  #  ##  #   # #### ###     # ####");
+    gotoxy(22, 5);
+    printf("## # #  #  # #   ##  #  #   ## #  #");
+    gotoxy(22, 6);
+    printf("# ## #  #  # #   ##  #  #    # ####");
+    gotoxy(22, 7);
+    printf("#  #  ##    #   #### ###    ###   #");
+    gotoxy(21, 12);
     printf("점프 = 위방향키(위화살표)\n");
+    gotoxy(21, 13);
     printf("왼쪽이동 = 왼쪽방향키(왼쪽화살표)\n");
+    gotoxy(21, 14);
     printf("오른쪽이동 = 오른쪽방향키(오른쪽화살표)\n");
+    gotoxy(21, 15);
     printf("공격 = spacebar\n");
+    gotoxy(21, 16);
     printf("게임종료 = t\n");
-    printf("메인메뉴로 돌아가려면 아무키나 누르세요.");
-    exit = _getch();
+    gotoxy(21, 17);
+    printf("AZ구매 = j");
+    gotoxy(21, 18);
+    printf("Moderna구매 = k");
+    gotoxy(21, 19);
+    printf("Pfizer구매 = l");
+    gotoxy(21, 21);
+
+    printf("이전으로 돌아가려면 q를 누르세요.");
+
+    char trash = 0;
+    while (1)
+    {
+        trash = getch();
+        if (trash == 'q')
+        {
+            break;
+        }
+    }
     system("cls");
     return;
 }
@@ -631,6 +682,37 @@ void insuk_rankload(void)
     char quit;
     system("cls");
 
+
+    gotoxy(0, 0);//상 
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+    gotoxy(0, 24);//하
+    for (int i = 0; i < 40; i++)
+    {
+        printf("□");
+    }
+
+    for (int i = 1; i < 24; i++)//좌  
+    {
+        gotoxy(0, i);
+        printf("□");
+    }
+    for (int i = 1; i < 24; i++)//우 
+    {
+        gotoxy(78, i);
+        printf("□");
+    }
+    gotoxy(22, 3);
+    printf("#  #  ##  #   # #### ###     # ####");
+    gotoxy(22, 4);
+    printf("## # #  #  # #   ##  #  #   ## #  #");
+    gotoxy(22, 5);
+    printf("# ## #  #  # #   ##  #  #    # ####");
+    gotoxy(22, 6);
+    printf("#  #  ##    #   #### ###    ###   #");
+
     char rankname[4][3];
     int rank[4], count = 0;
     FILE* fp;
@@ -639,9 +721,12 @@ void insuk_rankload(void)
     {
         count++;
     }
-    printf("*********AZ**********\n");
+
+    gotoxy(22, 9);
+    printf("*****************AZ****************\n");
     for (int i = 0; i < count; i++)
     {
+        gotoxy(31, i + 10);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
@@ -652,9 +737,12 @@ void insuk_rankload(void)
     {
         count++;
     }
-    printf("*******Moderna*******\n");
+
+    gotoxy(22, 13);
+    printf("***************Moderna*************\n");
     for (int i = 0; i < count; i++)
     {
+        gotoxy(31, i + 14);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
@@ -665,14 +753,17 @@ void insuk_rankload(void)
     {
         count++;
     }
-    printf("*******Pfizer********\n");
+
+    gotoxy(22, 17);
+    printf("****************Pfizer*************\n");
     for (int i = 0; i < count; i++)
     {
+        gotoxy(31, i + 18);
         printf("       %c%c%c %d\n", rankname[i][0], rankname[i][1], rankname[i][2], rank[i]);
     }
     fclose(fp);
-
-    printf("\nq를 누르면 종료 화면으로 넘어갑니다.");
+    gotoxy(22, 21);
+    printf("q를 누르면 종료 화면으로 넘어갑니다.");
 
     while (1)
     {
@@ -903,6 +994,7 @@ void ljh_CharTreat()
             printf("    ");
 
             //새 캐릭터 출력하기
+
             if (move_control_right == MOVE_DEGREE)
             {
                 x++;
@@ -1447,24 +1539,7 @@ void ljh_CharTreat()
     //h(도움말).
     if (GetAsyncKeyState(0x48) & 0x8000)
     {
-        system("cls");
-        printf("점프 = 위방향키(위화살표)\n");
-        printf("왼쪽이동 = 왼쪽방향키(왼쪽화살표)\n");
-        printf("오른쪽이동 = 오른쪽방향키(오른쪽화살표)\n");
-        printf("공격 = spacebar\n");
-        printf("게임종료 = t\n");
-        printf("게임으로 돌아가려면 q를 누르세요.");
-
-        char trash = 0;
-        while (1)
-        {
-            trash = getch();
-            if (trash == 'q')
-            {
-                system("cls");
-                break;
-            }
-        }
+        insuk_help();
     }
 
 
@@ -1585,7 +1660,40 @@ void sh_HP()
     {
         char option;
         system("cls");
-        printf("당신은 코로나에 감염되었습니다...\n");
+
+        gotoxy(0, 0);//상 
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+        gotoxy(0, 24);//하
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+
+        for (int i = 1; i < 24; i++)//좌  
+        {
+            gotoxy(0, i);
+            printf("□");
+        }
+        for (int i = 1; i < 24; i++)//우 
+        {
+            gotoxy(78, i);
+            printf("□");
+        }
+
+        gotoxy(22, 7);
+        printf("#  #  ##  #   # #### ###     # ####");
+        gotoxy(22, 8);
+        printf("## # #  #  # #   ##  #  #   ## #  #");
+        gotoxy(22, 9);
+        printf("# ## #  #  # #   ##  #  #    # ####");
+        gotoxy(22, 10);
+        printf("#  #  ##    #   #### ###    ###   #");
+        gotoxy(22, 15);
+        printf("당신은 코로나에 감염되었습니다...");
+        gotoxy(25, 16);
         printf("재도전(n) or 게임 종료(t)");
         option = _getch();
         if (option == 'n' || option == 'N')
@@ -1642,11 +1750,49 @@ void sh_Victory()
 
         //문구 출력
         system("cls");
-        printf("당신은 성공적으로 백신의 2차 접종을 맞으셨습니다.\n");
-        printf("COVID 19으로 부터 살아남으시느라 고생하셨습니다. 마음 놓고 일상생활을 즐기세요!\n\n\n");
+
+        gotoxy(0, 0);//상 
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+        gotoxy(0, 24);//하
+        for (int i = 0; i < 40; i++)
+        {
+            printf("□");
+        }
+
+        for (int i = 1; i < 24; i++)//좌  
+        {
+            gotoxy(0, i);
+            printf("□");
+        }
+        for (int i = 1; i < 24; i++)//우 
+        {
+            gotoxy(78, i);
+            printf("□");
+        }
+
+        gotoxy(22, 7);
+        printf("#  #  ##  #   # #### ###     # ####");
+        gotoxy(22, 8);
+        printf("## # #  #  # #   ##  #  #   ## #  #");
+        gotoxy(22, 9);
+        printf("# ## #  #  # #   ##  #  #    # ####");
+        gotoxy(22, 10);
+        printf("#  #  ##    #   #### ###    ###   #");
+        gotoxy(16, 13);
+        printf("당신은 성공적으로 백신의 2차 접종을 맞으셨습니다.");
+        gotoxy(16, 14);
+        printf("COVID 19으로 부터 살아남으시느라 고생하셨습니다.");
+        gotoxy(24, 15);
+        printf("마음 놓고 일상생활을 즐기세요!");
+        gotoxy(21, 17);
+
         printf("아무 키나 누르면 게임이 종료됩니다.");
 
         key = getch();
+        gotoxy(0, 26);
         exit(0);
     }
 }
@@ -2206,13 +2352,12 @@ void gotoxy(int x, int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
 }
 
-
-/*
-* 이름: hh_DamageJudge
-* 기능: 몬스터와 캐릭터의 충돌을 판단 후, 만약 충돌 했다면 캐릭터 체력 감소(hh_HPdecrease) 함수 불러옴
-* 받는값: 몬스터의 x,y좌표
-* 리턴값: x
-*/
+    /*
+    * 이름: hh_DamageJudge
+    * 기능: 몬스터와 캐릭터의 충돌을 판단 후, 만약 충돌 했다면 캐릭터 체력 감소(hh_HPdecrease) 함수 불러옴
+    * 받는값: 몬스터의 x,y좌표
+    * 리턴값: x
+    */
 void hh_DamageJudge(int MX, int MY)
 {
     //c_runstart = time(NULL);
